@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { Social, User } from './models';
 
 @Module({
   imports: [
@@ -16,9 +18,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
+      entities: [User, Social],
+      synchronize: true,
     }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private datasource: DataSource) {}
+}
