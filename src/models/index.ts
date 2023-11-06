@@ -1,3 +1,5 @@
+import { Product } from './product.entity';
+import { ProductImage } from './productImages.entity';
 import { Social } from './social.entity';
 import { User } from './user.entity';
-export { User, Social };
+export { Product, ProductImage, Social, User };
