@@ -2,14 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { HashTag } from './hashTag.entity';
+import { Market } from './market.entity';
 import { Social } from './social.entity';
+import { State } from './state.entity';
+import { UserProfileImage } from './userProfileImage.entity';
 
 @Entity('users')
 export class User {
@@ -47,12 +52,15 @@ export class User {
   @OneToMany(() => HashTag, (hashtag) => hashtag.user)
   hashtags: HashTag[];
 
-  @Column()
-  user_profile_image_id: number;
+  @OneToOne(() => UserProfileImage)
+  @JoinColumn()
+  user_profile_image: UserProfileImage;
 
-  @Column()
-  market_id: number;
+  @OneToOne(() => Market)
+  @JoinColumn()
+  market: Market;
 
-  @Column()
-  state_id: number;
+  @OneToOne(() => State)
+  @JoinColumn()
+  state: State;
 }
