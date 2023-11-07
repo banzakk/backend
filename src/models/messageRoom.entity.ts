@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ClosedMessageRoomStatus, Message } from '.';
+import { ClosedMessageRoomStatus, Message, UserMessageRoom } from '.';
 
 @Entity('message_rooms')
 export class MessageRoom {
@@ -30,4 +30,10 @@ export class MessageRoom {
   @OneToOne(() => ClosedMessageRoomStatus)
   @JoinColumn()
   receiver_status: ClosedMessageRoomStatus;
+
+  @OneToMany(
+    () => UserMessageRoom,
+    (userMessageRoom) => userMessageRoom.message_room,
+  )
+  user_message_rooms: UserMessageRoom[];
 }
