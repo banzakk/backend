@@ -1,4 +1,10 @@
-import { CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Product } from '.';
 
 @Entity('markets')
 export class Market {
@@ -8,5 +14,6 @@ export class Market {
   @CreateDateColumn()
   created_at: Date;
 
-  // product Id
+  @OneToMany(() => Product, (product) => product.market)
+  products: Product[];
 }
