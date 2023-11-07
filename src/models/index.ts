@@ -1,5 +1,6 @@
 export * from './city.entity';
 export * from './district.entity';
+export * from './message.entity';
 export * from './product.entity';
 export * from './productImages.entity';
 export * from './social.entity';
