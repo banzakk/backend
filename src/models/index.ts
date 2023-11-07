@@ -6,3 +6,4 @@ export * from './social.entity';
 export * from './state.entity';
 export * from './town.entity';
 export * from './user.entity';
+export * from './whisper.entity';
