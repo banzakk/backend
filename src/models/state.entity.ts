@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { City } from '.';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('states')
 export class State {
@@ -14,8 +7,4 @@ export class State {
 
   @Column()
   name: string;
-
-  @OneToOne(() => City)
-  @JoinColumn()
-  city: City;
 }

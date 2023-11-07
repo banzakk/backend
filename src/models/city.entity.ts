@@ -5,7 +5,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { District } from '.';
+import { State } from '.';
 
 @Entity('cities')
 export class City {
@@ -15,7 +15,7 @@ export class City {
   @Column()
   name: string;
 
-  @OneToOne(() => District)
+  @OneToOne(() => State)
   @JoinColumn()
-  district: District;
+  state: State;
 }

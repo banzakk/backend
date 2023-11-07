@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { District } from '.';
 
 @Entity('towns')
 export class Town {
@@ -7,4 +14,8 @@ export class Town {
 
   @Column()
   name: string;
+
+  @OneToOne(() => District)
+  @JoinColumn()
+  district: District;
 }
