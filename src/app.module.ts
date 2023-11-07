@@ -4,8 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Social, User } from './models';
-
+import * as entities from './models';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,7 +17,7 @@ import { Social, User } from './models';
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: [User, Social],
+      entities: Object.values(entities),
       synchronize: true,
     }),
   ],
