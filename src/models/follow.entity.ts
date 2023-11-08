@@ -13,11 +13,11 @@ export class Follow {
   id: number;
 
   @ManyToOne(() => User, (user) => user.followings)
-  @JoinColumn()
+  @JoinColumn({ name: 'following_user_id' })
   follower: User;
 
   @ManyToOne(() => User, (user) => user.followers)
-  @JoinColumn()
+  @JoinColumn({ name: 'followed_user_id' })
   following: User;
 
   @CreateDateColumn()
