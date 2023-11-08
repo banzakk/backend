@@ -29,6 +29,6 @@ export class WalkingParty {
   user: User;
 
   @OneToOne(() => walkingPartyStatus)
-  @JoinColumn()
+  @JoinColumn({ name: 'walking_party_status_id' })
   walking_party_status: walkingPartyStatus;
 }
