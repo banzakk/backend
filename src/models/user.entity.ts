@@ -5,7 +5,6 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -54,8 +53,7 @@ export class User {
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
-  @ManyToOne(() => UserSocial, (userSocial) => userSocial.user)
-  @JoinTable()
+  @OneToMany(() => UserSocial, (userSocial) => userSocial.user)
   user_socials: UserSocial;
 
   @OneToOne(() => UserRole)

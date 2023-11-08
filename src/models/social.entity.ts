@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserSocial } from '.';
 
 @Entity('socials')
@@ -9,6 +9,6 @@ export class Social {
   @Column()
   type: string;
 
-  @ManyToOne(() => UserSocial, (userSocial) => userSocial.user)
+  @OneToMany(() => UserSocial, (userSocial) => userSocial.user)
   users: UserSocial[];
 }
