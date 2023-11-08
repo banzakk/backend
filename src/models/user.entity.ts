@@ -3,8 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -91,8 +89,7 @@ export class User {
   @OneToMany(() => Message, (message) => message.user, { nullable: true })
   messages: Message[];
 
-  @ManyToMany(() => WalkingParty, (walkingParty) => walkingParty.user)
-  @JoinTable()
+  @OneToMany(() => WalkingParty, (walkingParty) => walkingParty.user)
   walking_parties: WalkingParty[];
 
   @OneToMany(() => Like, (like) => like.user)
