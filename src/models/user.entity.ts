@@ -22,6 +22,7 @@ import {
   UserRole,
   UserSocial,
   WalkingParty,
+  WalkingPartyUser,
   Whisper,
 } from '.';
 
@@ -112,4 +113,10 @@ export class User {
 
   @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user)
   user_hash_tags: UserHashTag[];
+
+  @OneToMany(
+    () => WalkingPartyUser,
+    (walkingPartyUser) => walkingPartyUser.user,
+  )
+  walking_party_users: WalkingPartyUser[];
 }

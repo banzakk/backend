@@ -4,11 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User, walkingPartyStatus } from '.';
+import { User, WalkingPartyUser, walkingPartyStatus } from '.';
 
 @Entity('walking_parties')
 export class WalkingParty {
@@ -31,4 +32,10 @@ export class WalkingParty {
   @OneToOne(() => walkingPartyStatus)
   @JoinColumn({ name: 'walking_party_status_id' })
   walking_party_status: walkingPartyStatus;
+
+  @OneToMany(
+    () => WalkingPartyUser,
+    (walkingPartyUser) => walkingPartyUser.walking_party,
+  )
+  walking_party_users: WalkingPartyUser[];
 }
