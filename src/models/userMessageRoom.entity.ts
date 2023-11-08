@@ -7,14 +7,14 @@ export class UserMessageRoom {
   id: number;
 
   @ManyToOne(() => User, (user) => user.sender)
-  @JoinColumn()
-  sender_id: User;
+  @JoinColumn({ name: 'sender_id' })
+  sender: User;
 
   @ManyToOne(() => User, (user) => user.receiver)
-  @JoinColumn()
-  receiver_id: User;
+  @JoinColumn({ name: 'receiver_id' })
+  receiver: User;
 
   @ManyToOne(() => MessageRoom, (messageRoom) => messageRoom.user_message_rooms)
-  @JoinColumn()
+  @JoinColumn({ name: 'message_room_id' })
   message_room: MessageRoom;
 }
