@@ -5,6 +5,8 @@ export class State {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    length: 6,
+  })
   name: string;
 }

@@ -17,7 +17,7 @@ export class Whisper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 200 })
   content: string;
 
   @CreateDateColumn()

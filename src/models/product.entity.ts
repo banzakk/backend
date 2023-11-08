@@ -16,14 +16,20 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    length: 20,
+  })
   title: string;
 
   @Column()
   content: string;
 
-  @Column()
-  price: number;
+  @Column({
+    type: 'decimal',
+    precision: 8,
+    scale: 2,
+  })
+  price: string;
 
   @CreateDateColumn()
   created_at: Date;

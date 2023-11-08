@@ -12,7 +12,9 @@ export class Town {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    length: 6,
+  })
   name: string;
 
   @OneToOne(() => District)

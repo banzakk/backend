@@ -12,10 +12,15 @@ export class ProductImage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: 'tinyint',
+    width: 1,
+  })
   is_thumbnail: number;
 
-  @Column()
+  @Column({
+    length: 255,
+  })
   url: string;
 
   @ManyToOne(() => Product, (product) => product.product_images)
