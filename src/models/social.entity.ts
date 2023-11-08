@@ -6,7 +6,7 @@ export class Social {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 10 })
   type: string;
 
   @OneToMany(() => UserSocial, (userSocial) => userSocial.user)
