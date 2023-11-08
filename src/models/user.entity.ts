@@ -101,15 +101,12 @@ export class User {
   @OneToMany(() => Whisper, (whisper) => whisper.user)
   whispers: Whisper[];
 
-  @OneToMany(
-    () => UserMessageRoom,
-    (userMessageRoom) => userMessageRoom.sender_id,
-  )
+  @OneToMany(() => UserMessageRoom, (userMessageRoom) => userMessageRoom.sender)
   sender: UserMessageRoom[];
 
   @OneToMany(
     () => UserMessageRoom,
-    (userMessageRoom) => userMessageRoom.receiver_id,
+    (userMessageRoom) => userMessageRoom.receiver,
   )
   receiver: UserMessageRoom[];
 }
