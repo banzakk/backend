@@ -5,6 +5,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -13,11 +14,12 @@ import {
 import {
   Block,
   Follow,
-  HashTag,
+  Like,
   Market,
   Message,
-  Social,
+  Rewhisper,
   State,
+  UserHashTag,
   UserMessageRoom,
   UserProfileImage,
   UserRole,
@@ -55,9 +57,9 @@ export class User {
   @JoinTable()
   socials: Social[];
 
-  @ManyToMany(() => HashTag, (hashtag) => hashtag.users)
+  @ManyToOne(() => UserHashTag, (userHashTag) => userHashTag.user)
   @JoinTable()
-  hashtags: HashTag[];
+  user_hash_tags: UserHashTag[];
 
   @OneToOne(() => UserRole)
   @JoinColumn({ name: 'user_role_id' })
