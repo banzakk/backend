@@ -25,7 +25,7 @@ export class WalkingParty {
   deleated_at: Date;
 
   @ManyToOne(() => User, (user) => user.walking_parties)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToOne(() => walkingPartyStatus)
