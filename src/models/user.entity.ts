@@ -75,18 +75,20 @@ export class User {
   @JoinColumn()
   state: State;
 
-  @OneToMany(() => Follow, (follow) => follow.following_user, {
+  @OneToMany(() => Follow, (follow) => follow.following, {
     nullable: true,
   })
   followings: Follow[];
 
-  @OneToMany(() => Follow, (follow) => follow.follower_user, { nullable: true })
+  @OneToMany(() => Follow, (follow) => follow.follower, {
+    nullable: true,
+  })
   followers: Follow[];
 
-  @OneToMany(() => Block, (block) => block.bloking_user, { nullable: true })
+  @OneToMany(() => Block, (block) => block.bloking, { nullable: true })
   blockings: Block[];
 
-  @OneToMany(() => Block, (block) => block.blocked_user, { nullable: true })
+  @OneToMany(() => Block, (block) => block.blocked, { nullable: true })
   blockeds: Block[];
 
   @OneToMany(() => Message, (message) => message.user, { nullable: true })

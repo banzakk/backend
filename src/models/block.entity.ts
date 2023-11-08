@@ -14,11 +14,11 @@ export class Block {
 
   @ManyToOne(() => User, (user) => user.blockings)
   @JoinColumn()
-  bloking_user: User;
+  bloking: User;
 
   @ManyToOne(() => User, (user) => user.blockeds)
   @JoinColumn()
-  blocked_user: User;
+  blocked: User;
 
   @CreateDateColumn()
   created_at: Date;

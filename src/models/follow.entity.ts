@@ -14,11 +14,11 @@ export class Follow {
 
   @ManyToOne(() => User, (user) => user.followings)
   @JoinColumn()
-  follower_user: User;
+  follower: User;
 
   @ManyToOne(() => User, (user) => user.followers)
   @JoinColumn()
-  following_user: User;
+  following: User;
 
   @CreateDateColumn()
   created_at: Date;
