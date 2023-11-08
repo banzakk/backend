@@ -27,11 +27,11 @@ export class Whisper {
   deleted_at: Date;
 
   @OneToOne(() => DeletedWhisper)
-  @JoinColumn()
+  @JoinColumn({ name: 'deleted_whisper_id' })
   deleted_whisper: DeletedWhisper;
 
   @ManyToOne(() => User, (user) => user.whispers)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => WhisperImage, (whisperImage) => whisperImage.whisper)

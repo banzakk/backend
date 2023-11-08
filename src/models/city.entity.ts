@@ -18,6 +18,6 @@ export class City {
   name: string;
 
   @OneToOne(() => State)
-  @JoinColumn()
+  @JoinColumn({ name: 'state_id' })
   state: State;
 }

@@ -24,11 +24,11 @@ export class MessageRoom {
   messages: Message[];
 
   @OneToOne(() => ClosedMessageRoomStatus)
-  @JoinColumn()
+  @JoinColumn({ name: 'sender_status' })
   sender_status: ClosedMessageRoomStatus;
 
   @OneToOne(() => ClosedMessageRoomStatus)
-  @JoinColumn()
+  @JoinColumn({ name: 'receiver_status' })
   receiver_status: ClosedMessageRoomStatus;
 
   @OneToMany(

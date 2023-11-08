@@ -41,6 +41,6 @@ export class Product {
   product_images: ProductImage[];
 
   @ManyToOne(() => Market, (market) => market.products)
-  @JoinColumn()
+  @JoinColumn({ name: 'market_id' })
   market: Market;
 }

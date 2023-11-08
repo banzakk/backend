@@ -24,6 +24,6 @@ export class ProductImage {
   url: string;
 
   @ManyToOne(() => Product, (product) => product.product_images)
-  @JoinColumn()
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 }
