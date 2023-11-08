@@ -3,15 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DeletedWhisper, User, WhisperImage } from '.';
+import { DeletedWhisper, Rewhisper, User, WhisperImage } from '.';
+import { Like } from './like.entity';
 
 @Entity('whispers')
 export class Whisper {
@@ -27,14 +26,6 @@ export class Whisper {
   @UpdateDateColumn({ nullable: true })
   deleted_at: Date;
 
-  @ManyToMany(() => User, (user) => user.whispers)
-  @JoinTable({ name: 'likes' })
-  likes: User[];
-
-  @ManyToMany(() => User, (user) => user.whispers)
-  @JoinTable({ name: 'rewhispers' })
-  rewhispers: User[];
-
   @OneToOne(() => DeletedWhisper)
   @JoinColumn()
   deleted_whisper: DeletedWhisper;
@@ -45,4 +36,10 @@ export class Whisper {
 
   @OneToMany(() => WhisperImage, (whisperImage) => whisperImage.whisper)
   whisper_images: WhisperImage[];
+
+  @OneToMany(() => Rewhisper, (rewhisper) => rewhisper.whisper)
+  rewhispers: Rewhisper[];
+
+  @OneToMany(() => Like, (like) => like.whisper)
+  likes: Like[];
 }
