@@ -1,5 +1,6 @@
 export * from './city.entity';
 export * from './closedMessageRoomStatus.entity';
+export * from './deletedWhisper.entity';
 export * from './district.entity';
 export * from './message.entity';
 export * from './messageRoom.entity';
