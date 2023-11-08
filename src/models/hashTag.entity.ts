@@ -6,7 +6,7 @@ export class HashTag {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 10 })
   name: string;
 
   @ManyToMany(() => User, (user) => user.hashtags)

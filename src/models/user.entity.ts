@@ -33,19 +33,16 @@ export class User {
   @Column({ length: 10 })
   name: string;
 
-  @Column()
+  @Column({ length: 14 })
   user_custom_id: string;
 
-  @Column()
+  @Column({ length: 200 })
   password: string;
 
-  @Column()
+  @Column({ length: 50 })
   email: string;
 
-  @Column()
-  role: string;
-
-  @Column()
+  @Column({ length: 36 })
   uid: string;
 
   @CreateDateColumn()

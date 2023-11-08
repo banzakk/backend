@@ -5,6 +5,6 @@ export class UserRole {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 8 })
   type: string;
 }

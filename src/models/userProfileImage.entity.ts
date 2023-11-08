@@ -5,6 +5,6 @@ export class UserProfileImage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 255 })
   url: string;
 }
