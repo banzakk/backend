@@ -22,4 +22,5 @@ export * from './userRole.entity';
 export * from './walkingParty.entity';
 export * from './walkingPartyStatus.entity';
 export * from './whisper.entity';
+export * from './whisperHashTag.entity';
 export * from './whisperImage.entity';

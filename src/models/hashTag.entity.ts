@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '.';
+import { WhisperHashTag } from './whisperHashTag.entity';
 
 @Entity('hash_tags')
 export class HashTag {
@@ -11,4 +18,7 @@ export class HashTag {
 
   @ManyToMany(() => User, (user) => user.hashtags)
   users: User[];
+
+  @OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.hashTag)
+  whisper_hash_tags: WhisperHashTag[];
 }

@@ -9,7 +9,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DeletedWhisper, Rewhisper, User, WhisperImage } from '.';
+import {
+  DeletedWhisper,
+  Rewhisper,
+  User,
+  WhisperHashTag,
+  WhisperImage,
+} from '.';
 import { Like } from './like.entity';
 
 @Entity('whispers')
@@ -42,4 +48,7 @@ export class Whisper {
 
   @OneToMany(() => Like, (like) => like.whisper)
   likes: Like[];
+
+  @OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.whisper)
+  whisper_hash_tags: WhisperHashTag[];
 }
