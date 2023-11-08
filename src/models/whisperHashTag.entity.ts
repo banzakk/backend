@@ -8,7 +8,7 @@ export class WhisperHashTag {
 
   @ManyToOne(() => HashTag, (hashTag) => hashTag.whisper_hash_tags)
   @JoinColumn({ name: 'hash_tag_id' })
-  hashTag: HashTag;
+  hash_tag: HashTag;
 
   @ManyToOne(() => Whisper, (whisper) => whisper.whisper_hash_tags)
   @JoinColumn({ name: 'whisper_id' })

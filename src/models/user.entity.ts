@@ -58,10 +58,6 @@ export class User {
   @JoinTable()
   user_socials: UserSocial;
 
-  @ManyToOne(() => UserHashTag, (userHashTag) => userHashTag.user)
-  @JoinTable()
-  user_hash_tags: UserHashTag[];
-
   @OneToOne(() => UserRole)
   @JoinColumn({ name: 'user_role_id' })
   user_role_id: UserRole;
@@ -118,4 +114,7 @@ export class User {
     (userMessageRoom) => userMessageRoom.receiver,
   )
   receiver: UserMessageRoom[];
+
+  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user)
+  user_hash_tags: UserHashTag[];
 }

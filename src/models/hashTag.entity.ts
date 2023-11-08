@@ -9,9 +9,9 @@ export class HashTag {
   @Column({ length: 10 })
   name: string;
 
-  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user)
-  users: UserHashTag[];
-
-  @OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.hashTag)
+  @OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.hash_tag)
   whisper_hash_tags: WhisperHashTag[];
+
+  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.hash_tag)
+  user_hash_tags: UserHashTag[];
 }

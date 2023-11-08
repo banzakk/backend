@@ -6,11 +6,11 @@ export class UserHashTag {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ManyToOne(() => HashTag, (hashTag) => hashTag.user_hash_tags)
+  @JoinColumn({ name: 'hash_tag_id' })
+  hash_tag: HashTag;
+
   @ManyToOne(() => User, (user) => user.user_hash_tags)
   @JoinColumn({ name: 'user_id' })
   user: User;
-
-  @ManyToOne(() => HashTag, (hashTag) => hashTag.users)
-  @JoinColumn({ name: 'hash_tag_id' })
-  hashtags: HashTag;
 }
