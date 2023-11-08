@@ -67,7 +67,7 @@ export class User {
   market: Market;
 
   @OneToOne(() => State)
-  @JoinColumn()
+  @JoinColumn({ name: 'state_id' })
   state: State;
 
   @OneToMany(() => Follow, (follow) => follow.following, {
