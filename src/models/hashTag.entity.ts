@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('hash_tags')
@@ -9,6 +9,6 @@ export class HashTag {
   @Column()
   name: string;
 
-  @ManyToOne(() => User, (user) => user.hashtags)
-  user: User;
+  @ManyToMany(() => User, (user) => user.hashtags)
+  users: User[];
 }

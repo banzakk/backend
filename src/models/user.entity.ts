@@ -10,11 +10,19 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { HashTag } from './hashTag.entity';
-import { Market } from './market.entity';
-import { Social } from './social.entity';
-import { State } from './state.entity';
-import { UserProfileImage } from './userProfileImage.entity';
+import {
+  Block,
+  Follow,
+  HashTag,
+  Market,
+  Message,
+  Social,
+  State,
+  UserMessageRoom,
+  UserProfileImage,
+  WalkingParty,
+  Whisper,
+} from '.';
 
 @Entity('users')
 export class User {
@@ -42,14 +50,15 @@ export class User {
   @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
   @ManyToMany(() => Social, (social) => social.users)
   @JoinTable()
   socials: Social[];
 
-  @OneToMany(() => HashTag, (hashtag) => hashtag.user)
+  @ManyToMany(() => HashTag, (hashtag) => hashtag.users)
+  @JoinTable()
   hashtags: HashTag[];
 
   @OneToOne(() => UserProfileImage)
@@ -63,4 +72,40 @@ export class User {
   @OneToOne(() => State)
   @JoinColumn()
   state: State;
+
+  @OneToMany(() => Follow, (follow) => follow.following_user, {
+    nullable: true,
+  })
+  followings: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower_user, { nullable: true })
+  followers: Follow[];
+
+  @OneToMany(() => Block, (block) => block.bloking_user, { nullable: true })
+  blockings: Block[];
+
+  @OneToMany(() => Block, (block) => block.blocked_user, { nullable: true })
+  blockeds: Block[];
+
+  @OneToMany(() => Message, (message) => message.user, { nullable: true })
+  messages: Message[];
+
+  @ManyToMany(() => WalkingParty, (walkingParty) => walkingParty.user)
+  @JoinTable()
+  walking_parties: WalkingParty[];
+
+  @OneToMany(() => Whisper, (whisper) => whisper.user)
+  whispers: Whisper[];
+
+  @OneToMany(
+    () => UserMessageRoom,
+    (userMessageRoom) => userMessageRoom.sender_id,
+  )
+  sender: UserMessageRoom[];
+
+  @OneToMany(
+    () => UserMessageRoom,
+    (userMessageRoom) => userMessageRoom.receiver_id,
+  )
+  receiver: UserMessageRoom[];
 }
