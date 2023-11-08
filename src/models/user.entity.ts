@@ -67,11 +67,11 @@ export class User {
   user_role_id: UserRole;
 
   @OneToOne(() => UserProfileImage)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_profile_image_id' })
   user_profile_image: UserProfileImage;
 
   @OneToOne(() => Market)
-  @JoinColumn()
+  @JoinColumn({ name: 'market_id' })
   market: Market;
 
   @OneToOne(() => State)
