@@ -20,6 +20,7 @@ import {
   State,
   UserMessageRoom,
   UserProfileImage,
+  UserRole,
   WalkingParty,
   Whisper,
 } from '.';
@@ -60,6 +61,10 @@ export class User {
   @ManyToMany(() => HashTag, (hashtag) => hashtag.users)
   @JoinTable()
   hashtags: HashTag[];
+
+  @OneToOne(() => UserRole)
+  @JoinColumn({ name: 'user_role_id' })
+  user_role_id: UserRole;
 
   @OneToOne(() => UserProfileImage)
   @JoinColumn()
