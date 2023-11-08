@@ -23,6 +23,7 @@ import {
   UserMessageRoom,
   UserProfileImage,
   UserRole,
+  UserSocial,
   WalkingParty,
   Whisper,
 } from '.';
@@ -53,9 +54,9 @@ export class User {
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
-  @ManyToMany(() => Social, (social) => social.users)
+  @ManyToOne(() => UserSocial, (userSocial) => userSocial.user)
   @JoinTable()
-  socials: Social[];
+  user_socials: UserSocial;
 
   @ManyToOne(() => UserHashTag, (userHashTag) => userHashTag.user)
   @JoinTable()

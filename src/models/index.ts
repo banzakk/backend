@@ -20,6 +20,7 @@ export * from './userHashTag.entity';
 export * from './userMessageRoom.entity';
 export * from './userProfileImage.entity';
 export * from './userRole.entity';
+export * from './userSocial.entity';
 export * from './walkingParty.entity';
 export * from './walkingPartyStatus.entity';
 export * from './whisper.entity';
