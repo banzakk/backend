@@ -6,11 +6,12 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DeletedWhisper, User } from '.';
+import { DeletedWhisper, User, WhisperImage } from '.';
 
 @Entity('whispers')
 export class Whisper {
@@ -41,4 +42,7 @@ export class Whisper {
   @ManyToOne(() => User, (user) => user.whispers)
   @JoinColumn()
   user: User;
+
+  @OneToMany(() => WhisperImage, (whisperImage) => whisperImage.whisper)
+  whisper_images: WhisperImage[];
 }
