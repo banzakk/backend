@@ -101,8 +101,14 @@ export class User {
   @JoinTable()
   walking_parties: WalkingParty[];
 
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
+
   @OneToMany(() => Whisper, (whisper) => whisper.user)
   whispers: Whisper[];
+
+  @OneToMany(() => Rewhisper, (rewhisper) => rewhisper.user)
+  rewhispers: Rewhisper[];
 
   @OneToMany(() => UserMessageRoom, (userMessageRoom) => userMessageRoom.sender)
   sender: UserMessageRoom[];
