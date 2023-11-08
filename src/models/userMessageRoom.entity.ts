@@ -6,11 +6,11 @@ export class UserMessageRoom {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.user_message_rooms)
+  @ManyToOne(() => User, (user) => user.sender)
   @JoinColumn()
   sender_id: User;
 
-  @ManyToOne(() => User, (user) => user.user_message_rooms)
+  @ManyToOne(() => User, (user) => user.receiver)
   @JoinColumn()
   receiver_id: User;
 
