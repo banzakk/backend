@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { HashTag, User } from '.';
-
+import { HashTag } from '.';
+import { User } from '../users/entities/user.entity';
 @Entity('user_hash_tags')
 export class UserHashTag {
   @PrimaryGeneratedColumn()

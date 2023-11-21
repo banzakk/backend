@@ -1,5 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { MessageRoom, User } from '.';
+import { MessageRoom } from '.';
+import { User } from '../users/entities/user.entity';
 
 @Entity('user_message_rooms')
 export class UserMessageRoom {

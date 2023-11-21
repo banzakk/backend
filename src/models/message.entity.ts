@@ -6,7 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MessageRoom, User } from '.';
+import { MessageRoom } from '.';
+import { User } from '../users/entities/user.entity';
 
 @Entity('messages')
 export class Message {

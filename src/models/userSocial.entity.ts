@@ -1,5 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Social, User } from '.';
+import { Social } from '.';
+import { User } from '../users/entities/user.entity';
 
 @Entity('user_socials')
 export class UserSocial {

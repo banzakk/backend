@@ -24,7 +24,7 @@ import {
   WalkingParty,
   WalkingPartyUser,
   Whisper,
-} from '.';
+} from '../../models';
 
 @Entity('users')
 export class User {

@@ -1,5 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User, WalkingParty } from '.';
+import { WalkingParty } from '.';
+import { User } from '../users/entities/user.entity';
 
 @Entity('walking_party_users')
 export class WalkingPartyUser {

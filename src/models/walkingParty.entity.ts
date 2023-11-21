@@ -9,7 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User, WalkingPartyUser, walkingPartyStatus } from '.';
+import { WalkingPartyUser, walkingPartyStatus } from '.';
+import { User } from '../users/entities/user.entity';
 
 @Entity('walking_parties')
 export class WalkingParty {
