@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import * as entities from './models';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,7 +16,7 @@ import * as entities from './models';
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: Object.values(entities),
+      entities: [__dirname + '/src/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
   ],
