@@ -90,33 +90,55 @@ export class User {
   @OneToMany(() => Message, (message) => message.user, { nullable: true })
   messages: Message[];
 
-  @OneToMany(() => WalkingParty, (walkingParty) => walkingParty.user)
+  @OneToMany(() => WalkingParty, (walkingParty) => walkingParty.user, {
+    nullable: true,
+  })
   walking_parties: WalkingParty[];
 
-  @OneToMany(() => Like, (like) => like.user)
+  @OneToMany(() => Like, (like) => like.user, {
+    nullable: true,
+  })
   likes: Like[];
 
-  @OneToMany(() => Whisper, (whisper) => whisper.user)
+  @OneToMany(() => Whisper, (whisper) => whisper.user, {
+    nullable: true,
+  })
   whispers: Whisper[];
 
-  @OneToMany(() => Rewhisper, (rewhisper) => rewhisper.user)
+  @OneToMany(() => Rewhisper, (rewhisper) => rewhisper.user, {
+    nullable: true,
+  })
   rewhispers: Rewhisper[];
 
-  @OneToMany(() => UserMessageRoom, (userMessageRoom) => userMessageRoom.sender)
+  @OneToMany(
+    () => UserMessageRoom,
+    (userMessageRoom) => userMessageRoom.sender,
+    {
+      nullable: true,
+    },
+  )
   sender: UserMessageRoom[];
 
   @OneToMany(
     () => UserMessageRoom,
     (userMessageRoom) => userMessageRoom.receiver,
+    {
+      nullable: true,
+    },
   )
   receiver: UserMessageRoom[];
 
-  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user)
+  @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.user, {
+    nullable: true,
+  })
   user_hash_tags: UserHashTag[];
 
   @OneToMany(
     () => WalkingPartyUser,
     (walkingPartyUser) => walkingPartyUser.user,
+    {
+      nullable: true,
+    },
   )
   walking_party_users: WalkingPartyUser[];
 }
