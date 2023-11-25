@@ -9,8 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { WalkingPartyUser, walkingPartyStatus } from '.';
-import { User } from '../users/entities/user.entity';
+import { User, WalkingPartyStatus, WalkingPartyUser } from '.';
 
 @Entity('walking_parties')
 export class WalkingParty {
@@ -30,9 +29,9 @@ export class WalkingParty {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToOne(() => walkingPartyStatus)
+  @OneToOne(() => WalkingPartyStatus)
   @JoinColumn({ name: 'walking_party_status_id' })
-  walking_party_status: walkingPartyStatus;
+  walking_party_status: WalkingPartyStatus;
 
   @OneToMany(
     () => WalkingPartyUser,

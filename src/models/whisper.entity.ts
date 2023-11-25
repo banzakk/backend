@@ -10,8 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { DeletedWhisper, Rewhisper, WhisperHashTag, WhisperImage } from '.';
-import { User } from '../users/entities/user.entity';
 import { Like } from './like.entity';
+import { User } from './user.entity';
 
 @Entity('whispers')
 export class Whisper {

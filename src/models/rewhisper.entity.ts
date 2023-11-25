@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Whisper } from '.';
-import { User } from '../users/entities/user.entity';
+import { User } from './user.entity';
 @Entity('rewhispers')
 export class Rewhisper {
   @PrimaryGeneratedColumn()

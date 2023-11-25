@@ -15,6 +15,7 @@ export * from './rewhisper.entity';
 export * from './social.entity';
 export * from './state.entity';
 export * from './town.entity';
+export * from './user.entity';
 export * from './userHashTag.entity';
 export * from './userMessageRoom.entity';
 export * from './userProfileImage.entity';
