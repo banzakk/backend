@@ -44,7 +44,7 @@ export class CreateUserDto {
   @IsNotEmpty(message.notEmpty('이메일은'))
   @MinLength(2, message.minIs('이메일은', 2))
   @MaxLength(50, message.minIs('이메일은', 50))
-  @IsEmail()
+  @IsEmail({}, { message: '유효하지 않은 이메일 형식입니다.' })
   email: string;
 
   @IsOptional()
