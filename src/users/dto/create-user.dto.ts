@@ -4,6 +4,7 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -46,6 +47,7 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsArray()
-  hashTags: number[];
+  @IsOptional()
+  @IsArray(message.typeIs('해시태그는', '배열'))
+  hashTags?: number[];
 }
