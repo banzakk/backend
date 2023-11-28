@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '.';
+import { User } from './user.entity';
 
 @Entity('blocks')
 export class Block {

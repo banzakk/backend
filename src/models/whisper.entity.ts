@@ -9,14 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  DeletedWhisper,
-  Rewhisper,
-  User,
-  WhisperHashTag,
-  WhisperImage,
-} from '.';
+import { DeletedWhisper, Rewhisper, WhisperHashTag, WhisperImage } from '.';
 import { Like } from './like.entity';
+import { User } from './user.entity';
 
 @Entity('whispers')
 export class Whisper {
