@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User, UserHashTag } from '@src/models';
 import * as bcrypt from 'bcrypt';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 @Injectable()
@@ -16,8 +16,8 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(UserHashTag)
     private userHashTagRepository: Repository<UserHashTag>,
-    private dataSource: DataSource,
   ) {}
+
   async signup(createUserDto: CreateUserDto) {
     const { email, hashTags } = createUserDto;
     const userExist = await this.isEmailExist(email);
@@ -29,7 +29,6 @@ export class UsersService {
     if (userId && hashTags && hashTags.length > 0)
       await this.addUserHashTag(userId, hashTags);
   }
-
   private async createUser({
     email,
     name,
