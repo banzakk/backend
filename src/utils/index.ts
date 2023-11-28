@@ -38,3 +38,13 @@ export class ValidationMessage {
     return { message: `${fieldName} 최대 ${max}자 이하이어야 합니다.` };
   }
 }
+
+/**
+ * @function trimAll 모든 공백 제거 함수
+ * @param value 문자열 데이터
+ * @returns 모든 공백이 제거된 문자열 데이터
+ */
+export const trimAll = (value: string): string => {
+  const target = value.replace(/\s+/g, '');
+  return target.trim();
+};
