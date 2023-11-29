@@ -25,9 +25,29 @@ export class UsersService {
       throw new BadRequestException('해당 email로는 가입할 수 없습니다.');
     }
     await this.createUser(createUserDto);
-    const userId = await this.getUserIdByEmail(email);
-    if (userId && hashTags && hashTags.length > 0)
-      await this.addUserHashTag(userId, hashTags);
+    const user = await this.getUserByEmail(email);
+    if (user && user.id && hashTags && hashTags.length > 0)
+      await this.addUserHashTag(user.id, hashTags);
+  }
+  async getUserByEmail(email: string): Promise<User> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { email },
+      });
+      if (!user)
+        throw new NotFoundException(
+          `이메일이 ${email}인 사용자를 찾을 수 없습니다.`,
+        );
+      return user;
+    } catch (err) {
+      console.error(err);
+      if (err instanceof NotFoundException) {
+        throw err;
+      }
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
   }
   private async createUser({
     email,
@@ -61,26 +81,6 @@ export class UsersService {
       console.error(err);
       throw new InternalServerErrorException(
         '이메일 존재 여부 확인 중 오류가 발생했습니다.',
-      );
-    }
-  }
-  private async getUserIdByEmail(email: string): Promise<number> {
-    try {
-      const user = await this.usersRepository.findOne({
-        where: { email },
-      });
-      if (!user)
-        throw new NotFoundException(
-          `이메일이 ${email}인 사용자를 찾을 수 없습니다.`,
-        );
-      return user.id;
-    } catch (err) {
-      console.error(err);
-      if (err instanceof NotFoundException) {
-        throw err;
-      }
-      throw new InternalServerErrorException(
-        '사용자 조회 중 오류가 발생했습니다.',
       );
     }
   }
