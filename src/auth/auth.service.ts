@@ -1,4 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@src/users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -9,6 +10,7 @@ export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
+    private configService: ConfigService,
     private jwtService: JwtService,
   ) {}
 
@@ -26,8 +28,17 @@ export class AuthService {
   }
 
   async generateToken(user: AuthInfo) {
-    return {
-      access_token: this.jwtService.sign(user),
-    };
+    const accessToken = this.jwtService.sign(user);
+    return accessToken;
+  }
+  async generateRefreshToken({ userUid }: Partial<AuthInfo>) {
+    const refreshToken = this.jwtService.sign(
+      { userUid },
+      {
+        secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
+        expiresIn: '10s',
+      },
+    );
+    return refreshToken;
   }
 }
