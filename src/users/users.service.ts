@@ -49,6 +49,23 @@ export class UsersService {
       );
     }
   }
+  async getUserByUid(userUid: string): Promise<User> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { uid: userUid },
+      });
+      if (!user) throw new NotFoundException(`사용자를 찾을 수 없습니다.`);
+      return user;
+    } catch (err) {
+      console.error(err);
+      if (err instanceof NotFoundException) {
+        throw err;
+      }
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
   private async createUser({
     email,
     name,
