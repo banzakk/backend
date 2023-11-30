@@ -36,7 +36,7 @@ export class AuthService {
       { userUid },
       {
         secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
-        expiresIn: '10s',
+        expiresIn: '30d',
       },
     );
     return refreshToken;
