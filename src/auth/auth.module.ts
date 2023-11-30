@@ -6,6 +6,7 @@ import { UsersModule } from '@src/users/users.module';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
+import { RefreshJwtStrategy } from './refresh-jwt.startegy';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { LocalStrategy } from './local.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
