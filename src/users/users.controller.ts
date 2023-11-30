@@ -4,6 +4,7 @@ import {
   Get,
   Post,
   Request,
+  Res,
   UnauthorizedException,
   UseGuards,
   ValidationPipe,
@@ -33,14 +34,22 @@ export class UsersController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Request() req) {
+  async login(@Res({ passthrough: true }) res, @Request() req) {
     const accessToken = await this.authService.generateToken(req.user);
     const refreshToken = await this.authService.generateRefreshToken(req.user);
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      path: '/users/refresh-token',
+      maxAge: 24 * 60 * 60 * 1000 * 30, //한 달
+      secure: true,
+      sameSite: 'none',
+    });
+
     return {
       accessToken,
-      refreshToken,
     };
   }
+
   @Public()
   @UseGuards(RefreshJwtGuard)
   @Post('/refresh-token')
