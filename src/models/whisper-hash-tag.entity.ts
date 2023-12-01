@@ -1,5 +1,6 @@
+import { Whisper } from '@src/whispers/entities/whisper.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { HashTag, Whisper } from '.';
+import { HashTag } from '.';
 
 @Entity('whisper_hash_tags')
 export class WhisperHashTag {

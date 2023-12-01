@@ -1,3 +1,4 @@
+import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
   Column,
   CreateDateColumn,
@@ -23,7 +24,6 @@ import {
   UserSocial,
   WalkingParty,
   WalkingPartyUser,
-  Whisper,
 } from '.';
 
 @Entity('users')

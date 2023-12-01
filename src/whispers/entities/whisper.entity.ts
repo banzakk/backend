@@ -9,9 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DeletedWhisper, Rewhisper, WhisperHashTag, WhisperImage } from '.';
-import { Like } from './like.entity';
-import { User } from './user.entity';
+import {
+  DeletedWhisper,
+  Rewhisper,
+  WhisperHashTag,
+  WhisperImage,
+} from '../../models';
+import { Like } from '../../models/like.entity';
+import { User } from '../../models/user.entity';
 
 @Entity('whispers')
 export class Whisper {
@@ -31,7 +36,7 @@ export class Whisper {
   @JoinColumn({ name: 'deleted_whisper_id' })
   deleted_whisper: DeletedWhisper;
 
-  @ManyToOne(() => User, (user) => user.whispers)
+  @ManyToOne(() => User, (user) => user.whispers, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   user: User;
 

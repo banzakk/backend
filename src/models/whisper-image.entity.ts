@@ -1,3 +1,4 @@
+import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
   CreateDateColumn,
   Entity,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Whisper } from '.';
 
 @Entity('whisper_images')
 export class WhisperImage {
