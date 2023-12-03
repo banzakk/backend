@@ -41,7 +41,6 @@ export class UsersController {
       httpOnly: true,
       path: '/users/refresh-token',
       maxAge: 24 * 60 * 60 * 1000 * 30, //한 달
-      secure: true,
       sameSite: 'none',
     });
 
