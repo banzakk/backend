@@ -3,11 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { Redis } from 'ioredis';
 import { AuthInfo } from './types/auth-info';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
     private configService: ConfigService,
@@ -27,11 +29,11 @@ export class AuthService {
     return null;
   }
 
-  async generateToken(user: AuthInfo) {
+  generateToken(user: AuthInfo): string {
     const accessToken = this.jwtService.sign(user);
     return accessToken;
   }
-  async generateRefreshToken({ userUid }: Partial<AuthInfo>) {
+  generateRefreshToken({ userUid }: Partial<AuthInfo>): string {
     const refreshToken = this.jwtService.sign(
       { userUid },
       {
@@ -40,5 +42,19 @@ export class AuthService {
       },
     );
     return refreshToken;
+  }
+  async saveRefreshTokenByUserId(userId: string, token: string): Promise<void> {
+    const decoded = this.jwtService.decode(token);
+    const exp = decoded.exp;
+    const now = Math.floor(Date.now() / 1000);
+    await this.redisClient.set(
+      `refresh_token:${userId}`,
+      token,
+      'EX',
+      exp - now,
+    );
+  }
+  async getRefreshTokenByUserId(userId: string): Promise<string> {
+    return await this.redisClient.get(`refresh_token:${userId}`);
   }
 }
