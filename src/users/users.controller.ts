@@ -37,6 +37,10 @@ export class UsersController {
   async login(@Res({ passthrough: true }) res, @Request() req) {
     const accessToken = await this.authService.generateToken(req.user);
     const refreshToken = await this.authService.generateRefreshToken(req.user);
+    await this.authService.saveRefreshTokenByUserId(
+      req.user.userId,
+      refreshToken,
+    );
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       path: '/users/refresh-token',
@@ -54,6 +58,14 @@ export class UsersController {
   @Post('/refresh-token')
   async refreshToken(@Request() req) {
     if (!allKeysExist(req.user, ['userId', 'userUid', 'email'])) {
+      throw new UnauthorizedException(
+        '요청이 유효하지 않습니다. 다시 로그인 해주세요.',
+      );
+    }
+    const storedRefreshToken = await this.authService.getRefreshTokenByUserId(
+      req.user.userId,
+    );
+    if (req.cookies.refreshToken !== storedRefreshToken) {
       throw new UnauthorizedException(
         '요청이 유효하지 않습니다. 다시 로그인 해주세요.',
       );
