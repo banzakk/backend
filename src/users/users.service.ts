@@ -5,7 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserHashTag } from '@src/models';
+import { UserHashTag } from '@src/models';
+import { User } from '@src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import * as uuid from 'uuid';

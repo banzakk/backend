@@ -1,3 +1,4 @@
+import { User } from '@src/users/entities/user.entity';
 import {
   CreateDateColumn,
   Entity,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 
 @Entity('blocks')
 export class Block {

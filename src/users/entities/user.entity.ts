@@ -24,7 +24,7 @@ import {
   UserSocial,
   WalkingParty,
   WalkingPartyUser,
-} from '.';
+} from '../../models';
 
 @Entity('users')
 export class User {

@@ -20,7 +20,6 @@ export * from './user-message-room.entity';
 export * from './user-profile-image.entity';
 export * from './user-role.entity';
 export * from './user-social.entity';
-export * from './user.entity';
 export * from './walking-party-status.entity';
 export * from './walking-party-user.entity';
 export * from './walking-party.entity';
