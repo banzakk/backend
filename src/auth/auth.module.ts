@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '@src/users/users.module';
 import { AuthService } from './auth.service';
+import { GoogleOauthStrategy } from './google-oauth.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { RefreshJwtStrategy } from './refresh-jwt.startegy';
@@ -21,7 +22,13 @@ import { RefreshJwtStrategy } from './refresh-jwt.startegy';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+    GoogleOauthStrategy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
