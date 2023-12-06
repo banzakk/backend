@@ -34,10 +34,10 @@ export class User {
   @Column({ length: 10 })
   name: string;
 
-  @Column({ length: 14 })
+  @Column({ length: 14, nullable: true })
   user_custom_id: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: true })
   password: string;
 
   @Column({ length: 50 })
