@@ -30,6 +30,12 @@ export class UsersService {
     if (user && user.id && hashTags && hashTags.length > 0)
       await this.addUserHashTag(user.id, hashTags);
   }
+  async socialSignUp({ email, name }: { email: string; name: string }) {
+    await this.createSocialUser({
+      email,
+      name,
+    });
+  }
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -67,12 +73,7 @@ export class UsersService {
       );
     }
   }
-  private async createUser({
-    email,
-    name,
-    user_custom_id,
-    password,
-  }: CreateUserDto) {
+  async createUser({ email, name, user_custom_id, password }: CreateUserDto) {
     try {
       const hash = await bcrypt.hash(password, 12);
       const user = new User();
@@ -80,6 +81,21 @@ export class UsersService {
       user.email = email;
       user.user_custom_id = user_custom_id;
       user.password = hash;
+      user.uid = uuid.v4();
+      await this.usersRepository.save(user);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 생성 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async createSocialUser({ email, name }: Partial<CreateUserDto>) {
+    try {
+      const user = new User();
+      user.name = name;
+      user.email = email;
       user.uid = uuid.v4();
       await this.usersRepository.save(user);
     } catch (err) {
