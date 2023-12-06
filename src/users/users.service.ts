@@ -89,7 +89,7 @@ export class UsersService {
       );
     }
   }
-  private async isEmailExist(email: string) {
+  async isEmailExist(email: string): Promise<boolean> {
     try {
       const user = await this.usersRepository.findOne({
         where: { email },
