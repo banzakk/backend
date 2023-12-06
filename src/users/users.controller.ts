@@ -5,11 +5,14 @@ import {
   Post,
   Request,
   Res,
+  Response,
   UnauthorizedException,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
+import { GoogleAuthGuard } from '@src/auth/google-auth.guard';
 import { LocalAuthGuard } from '@src/auth/local-auth.guard';
 import { RefreshJwtGuard } from '@src/auth/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
@@ -19,10 +22,19 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  cookieOption = {};
   constructor(
     private readonly usersService: UsersService,
-    private authService: AuthService,
-  ) {}
+    private readonly authService: AuthService,
+    private configService: ConfigService,
+  ) {
+    this.cookieOption = {
+      httpOnly: true,
+      path: '/users/refresh-token',
+      maxAge: 24 * 60 * 60 * 1000 * 30, //한 달
+      sameSite: 'none',
+    };
+  }
 
   @Public()
   @Post('/signup')
@@ -41,12 +53,7 @@ export class UsersController {
       req.user.userId,
       refreshToken,
     );
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      path: '/users/refresh-token',
-      maxAge: 24 * 60 * 60 * 1000 * 30, //한 달
-      sameSite: 'none',
-    });
+    res.cookie('refreshToken', refreshToken, this.cookieOption);
 
     return {
       accessToken,
@@ -81,5 +88,34 @@ export class UsersController {
     console.log(req.user);
 
     return 'ok';
+  }
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get('/google')
+  googleLogin(@Request() req) {
+    console.log(req);
+  }
+
+  @Public()
+  @Get('/google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleCallback(@Request() req, @Response() res) {
+    if (!allKeysExist(req.user, ['name', 'email'])) {
+      res.redirect(`${this.configService.get<string>('CLIENT_URI')}?code=fail`);
+    }
+    const user = await this.usersService.getUserByEmail(req.user.email);
+    if (!user && !user.uid) {
+      await this.usersService.socialSignUp(req.user);
+    }
+    const refreshToken = await this.authService.generateRefreshToken(req.user);
+    await this.authService.saveRefreshTokenByUserId(
+      req.user.userId,
+      refreshToken,
+    );
+    res.cookie('refreshToken', refreshToken, this.cookieOption);
+    res.redirect(
+      `${this.configService.get<string>('CLIENT_URI')}?code=success`,
+    );
   }
 }
