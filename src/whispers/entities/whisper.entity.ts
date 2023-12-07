@@ -30,7 +30,7 @@ export class Whisper {
   created_at: Date;
 
   @UpdateDateColumn({ nullable: true })
-  deleted_at: Date;
+  updated_at: Date;
 
   @OneToOne(() => DeletedWhisper)
   @JoinColumn({ name: 'deleted_whisper_id' })
