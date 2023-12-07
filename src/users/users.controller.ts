@@ -101,12 +101,9 @@ export class UsersController {
   @Get('/google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(@Request() req, @Response() res) {
-    if (!allKeysExist(req.user, ['name', 'email'])) {
+    if (!allKeysExist(req.user, ['name', 'email', 'uid', 'id'])) {
       res.redirect(`${this.configService.get<string>('CLIENT_URI')}?code=fail`);
-    }
-    const user = await this.usersService.getUserByEmail(req.user.email);
-    if (!user && !user.uid) {
-      await this.usersService.socialSignUp(req.user);
+      return;
     }
     const refreshToken = await this.authService.generateRefreshToken(req.user);
     await this.authService.saveRefreshTokenByUserId(
@@ -117,5 +114,6 @@ export class UsersController {
     res.redirect(
       `${this.configService.get<string>('CLIENT_URI')}?code=success`,
     );
+    return;
   }
 }
