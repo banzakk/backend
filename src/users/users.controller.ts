@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Request,
-  Res,
   Response,
   UnauthorizedException,
   UseGuards,
@@ -48,7 +47,7 @@ export class UsersController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Res({ passthrough: true }) res, @Request() req) {
+  async login(@Response({ passthrough: true }) res, @Request() req) {
     const accessToken = await this.authService.generateToken(req.user);
     const refreshToken = await this.authService.generateRefreshToken(req.user);
     await this.authService.saveRefreshTokenByUserId(
@@ -100,7 +99,7 @@ export class UsersController {
   @Public()
   @Get('/google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleCallback(@Request() req, @Response() res) {
+  async googleCallback(@Request() req, @Response({ passthrough: true }) res) {
     return this.handleCallback(req, res);
   }
 
@@ -112,7 +111,7 @@ export class UsersController {
   @Public()
   @Get('/naver/callback')
   @UseGuards(NaverAuthGuard)
-  async naverCallback(@Request() req, @Response() res) {
+  async naverCallback(@Request() req, @Response({ passthrough: true }) res) {
     return this.handleCallback(req, res);
   }
 
@@ -124,7 +123,7 @@ export class UsersController {
   @Public()
   @Get('/kakao/callback')
   @UseGuards(KakaoAuthGuard)
-  async kakaoCallback(@Request() req, @Response() res) {
+  async kakaoCallback(@Request() req, @Response({ passthrough: true }) res) {
     return this.handleCallback(req, res);
   }
 
