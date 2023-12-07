@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { GoogleAuthStrategy } from './strategies/google-auth.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { NaverAuthStrategy } from './strategies/naver-auth.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.startegy';
 
 @Module({
@@ -28,6 +29,7 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.startegy';
     JwtStrategy,
     RefreshJwtStrategy,
     GoogleAuthStrategy,
+    NaverAuthStrategy,
   ],
   exports: [AuthService],
 })
