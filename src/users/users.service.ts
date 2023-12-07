@@ -35,6 +35,7 @@ export class UsersService {
     if (user && user.id && hashTags && hashTags.length > 0)
       await this.addUserHashTag(user.id, hashTags);
   }
+
   async socialSignUpTransaction(email: string, name: string, type: AuthType) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -62,6 +63,7 @@ export class UsersService {
       await queryRunner.release();
     }
   }
+
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -75,6 +77,7 @@ export class UsersService {
       );
     }
   }
+
   async getUserByUid(userUid: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -88,6 +91,7 @@ export class UsersService {
       );
     }
   }
+
   async createUser({ email, name, user_custom_id, password }: CreateUserDto) {
     try {
       const hash = await bcrypt.hash(password, 12);
@@ -126,6 +130,7 @@ export class UsersService {
       );
     }
   }
+
   async isEmailExist(email: string): Promise<boolean> {
     try {
       const user = await this.usersRepository.findOne({
@@ -139,6 +144,7 @@ export class UsersService {
       );
     }
   }
+
   private async addUserHashTag(userId: number, hashTags: any) {
     try {
       const hashes = hashTags.map((data) => ({

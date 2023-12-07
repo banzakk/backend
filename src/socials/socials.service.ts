@@ -9,6 +9,7 @@ export class SocialsService {
   constructor(
     @InjectRepository(Social) private socialRepository: Repository<Social>,
   ) {}
+
   async getSocialIdByType(type: AuthType): Promise<number> {
     try {
       const social = await this.socialRepository.findOne({

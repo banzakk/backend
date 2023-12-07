@@ -33,6 +33,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign(user);
     return accessToken;
   }
+
   generateRefreshToken({ userUid }: Partial<AuthInfo>): string {
     const refreshToken = this.jwtService.sign(
       { userUid },
@@ -43,6 +44,7 @@ export class AuthService {
     );
     return refreshToken;
   }
+
   async saveRefreshTokenByUserId(userId: string, token: string): Promise<void> {
     const decoded = this.jwtService.decode(token);
     const exp = decoded.exp;
@@ -54,6 +56,7 @@ export class AuthService {
       exp - now,
     );
   }
+
   async getRefreshTokenByUserId(userId: string): Promise<string> {
     return await this.redisClient.get(`refresh_token:${userId}`);
   }

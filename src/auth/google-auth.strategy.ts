@@ -17,6 +17,7 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy, 'google') {
       scope: ['email', 'profile'],
     });
   }
+
   async validate(accessToken, refreshToken, profile) {
     const email = profile.emails[0].value;
     const name = profile.displayName;
