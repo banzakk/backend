@@ -13,6 +13,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
 import { GoogleAuthGuard } from '@src/auth/guards/google-auth.guard';
+import { KakaoAuthGuard } from '@src/auth/guards/kakao-auth.guard';
 import { LocalAuthGuard } from '@src/auth/guards/local-auth.guard';
 import { NaverAuthGuard } from '@src/auth/guards/naver-auth.guard';
 import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
@@ -112,6 +113,18 @@ export class UsersController {
   @Get('/naver/callback')
   @UseGuards(NaverAuthGuard)
   async naverCallback(@Request() req, @Response() res) {
+    return this.handleCallback(req, res);
+  }
+
+  @Public()
+  @UseGuards(KakaoAuthGuard)
+  @Get('/kakao')
+  kakaoLogin() {}
+
+  @Public()
+  @Get('/kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoCallback(@Request() req, @Response() res) {
     return this.handleCallback(req, res);
   }
 
