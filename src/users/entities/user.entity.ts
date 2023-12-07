@@ -40,7 +40,7 @@ export class User {
   @Column({ length: 200, nullable: true })
   password: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   email: string;
 
   @Column({ length: 36 })
