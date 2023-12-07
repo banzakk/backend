@@ -1,6 +1,6 @@
+import { Social } from '@src/socials/entities/social.entity';
 import { User } from '@src/users/entities/user.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Social } from '.';
 @Entity('user_socials')
 export class UserSocial {
   @PrimaryGeneratedColumn()

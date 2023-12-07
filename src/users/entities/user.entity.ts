@@ -1,3 +1,4 @@
+import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
   Column,
@@ -21,7 +22,6 @@ import {
   UserMessageRoom,
   UserProfileImage,
   UserRole,
-  UserSocial,
   WalkingParty,
   WalkingPartyUser,
 } from '../../models';
