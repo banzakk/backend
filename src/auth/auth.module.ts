@@ -4,10 +4,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '@src/users/users.module';
 import { AuthService } from './auth.service';
-import { GoogleAuthStrategy } from './google-auth.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalStrategy } from './local.strategy';
-import { RefreshJwtStrategy } from './refresh-jwt.startegy';
+import { GoogleAuthStrategy } from './strategies/google-auth.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { RefreshJwtStrategy } from './strategies/refresh-jwt.startegy';
 
 @Module({
   imports: [
