@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
 import { GoogleAuthGuard } from '@src/auth/guards/google-auth.guard';
 import { LocalAuthGuard } from '@src/auth/guards/local-auth.guard';
+import { NaverAuthGuard } from '@src/auth/guards/naver-auth.guard';
 import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
 import { allKeysExist } from '@src/utils';
@@ -93,14 +94,28 @@ export class UsersController {
   @Public()
   @UseGuards(GoogleAuthGuard)
   @Get('/google')
-  googleLogin(@Request() req) {
-    console.log(req);
-  }
+  googleLogin() {}
 
   @Public()
   @Get('/google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(@Request() req, @Response() res) {
+    return this.handleCallback(req, res);
+  }
+
+  @Public()
+  @UseGuards(NaverAuthGuard)
+  @Get('/naver')
+  naverLogin() {}
+
+  @Public()
+  @Get('/naver/callback')
+  @UseGuards(NaverAuthGuard)
+  async naverCallback(@Request() req, @Response() res) {
+    return this.handleCallback(req, res);
+  }
+
+  private async handleCallback(req, res) {
     if (!allKeysExist(req.user, ['name', 'email', 'uid', 'id'])) {
       res.redirect(`${this.configService.get<string>('CLIENT_URI')}?code=fail`);
       return;
