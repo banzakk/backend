@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
-import { GoogleAuthGuard } from '@src/auth/google-auth.guard';
-import { LocalAuthGuard } from '@src/auth/local-auth.guard';
-import { RefreshJwtGuard } from '@src/auth/refresh-jwt-auth.guard';
+import { GoogleAuthGuard } from '@src/auth/guards/google-auth.guard';
+import { LocalAuthGuard } from '@src/auth/guards/local-auth.guard';
+import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
 import { allKeysExist } from '@src/utils';
 import { CreateUserDto } from './dto/create-user.dto';
