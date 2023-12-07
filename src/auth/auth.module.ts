@@ -6,6 +6,7 @@ import { UsersModule } from '@src/users/users.module';
 import { AuthService } from './auth.service';
 import { GoogleAuthStrategy } from './strategies/google-auth.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { KakaoAuthStrategy } from './strategies/kakao-auth.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { NaverAuthStrategy } from './strategies/naver-auth.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.startegy';
@@ -30,6 +31,7 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.startegy';
     RefreshJwtStrategy,
     GoogleAuthStrategy,
     NaverAuthStrategy,
+    KakaoAuthStrategy,
   ],
   exports: [AuthService],
 })
