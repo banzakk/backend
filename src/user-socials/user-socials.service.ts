@@ -10,11 +10,12 @@ export class UserSocialsService {
     private userSocialRepository: Repository<UserSocial>,
   ) {}
 
-  async saveUserSocial(socialId, userId, queryRunner: QueryRunner) {
+  async saveUserSocial(socialId, userId, email, queryRunner: QueryRunner) {
     try {
       const userSocials = new UserSocial();
       userSocials.socials = socialId;
       userSocials.user = userId;
+      userSocials.email = email;
       if (!queryRunner) {
         await this.userSocialRepository.save(userSocials);
         return;

@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
 import { UserHashTag } from '@src/models';
 import { SocialsService } from '@src/socials/socials.service';
+import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
 import { User } from '@src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -19,6 +20,8 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(UserHashTag)
     private userHashTagRepository: Repository<UserHashTag>,
+    @InjectRepository(UserSocial)
+    private userSocialRepository: Repository<UserSocial>,
     private readonly socialsService: SocialsService,
     private readonly userSocialsService: UserSocialsService,
     private dataSource: DataSource,
@@ -41,17 +44,12 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await this.createSocialUser(
-        {
-          email,
-          name,
-        },
-        queryRunner,
-      );
+      const user = await this.createSocialUser(name, queryRunner);
       const socialId = await this.socialsService.getSocialIdByType(type);
       await this.userSocialsService.saveUserSocial(
         socialId,
         user.id,
+        email,
         queryRunner,
       );
       await queryRunner.commitTransaction();
@@ -110,14 +108,10 @@ export class UsersService {
     }
   }
 
-  async createSocialUser(
-    { email, name }: Partial<CreateUserDto>,
-    queryRunner: QueryRunner,
-  ) {
+  async createSocialUser(name: string, queryRunner: QueryRunner) {
     try {
       const user = new User();
       user.name = name;
-      user.email = email;
       user.uid = uuid.v4();
       if (!queryRunner) {
         return await this.usersRepository.save(user);
@@ -143,6 +137,15 @@ export class UsersService {
         '이메일 존재 여부 확인 중 오류가 발생했습니다.',
       );
     }
+  }
+
+  async getSocialUserByEmail(email: string): Promise<User | undefined> {
+    return await this.userSocialRepository
+      .createQueryBuilder('userSocial')
+      .leftJoinAndSelect('userSocial.user', 'user')
+      .where('userSocial.email = :email', { email })
+      .getOne()
+      .then((userSocial) => userSocial?.user);
   }
 
   private async addUserHashTag(userId: number, hashTags: any) {

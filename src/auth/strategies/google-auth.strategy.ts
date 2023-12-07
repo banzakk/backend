@@ -21,7 +21,7 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy, 'google') {
   async validate(accessToken, refreshToken, profile) {
     const email = profile.emails[0].value;
     const name = profile.displayName;
-    let user = await this.usersService.getUserByEmail(email);
+    let user = await this.usersService.getSocialUserByEmail(email);
     if (!user) {
       user = await this.usersService.socialSignUpTransaction(
         email,
@@ -29,7 +29,6 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy, 'google') {
         'google',
       );
     }
-
     const { uid, id } = user;
 
     return {
