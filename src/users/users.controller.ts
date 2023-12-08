@@ -31,7 +31,7 @@ export class UsersController {
   ) {
     this.cookieOption = {
       httpOnly: true,
-      path: '/users/refresh-token',
+      secure: true,
       maxAge: 24 * 60 * 60 * 1000 * 30, //한 달
       sameSite: 'none',
     };
@@ -133,12 +133,15 @@ export class UsersController {
   }
 
   private async handleCallback(req, res) {
-    if (!allKeysExist(req.user, ['name', 'email', 'uid', 'id'])) {
+    if (!allKeysExist(req.user, ['name', 'email', 'userUid', 'userId'])) {
       res.redirect(`${this.configService.get<string>('CLIENT_URI')}?code=fail`);
       return;
     }
     const refreshToken = await this.authService.generateRefreshToken(req.user);
-    await this.authService.saveRefreshTokenByUserId(req.user.id, refreshToken);
+    await this.authService.saveRefreshTokenByUserId(
+      req.user.userId,
+      refreshToken,
+    );
     res.cookie('refreshToken', refreshToken, this.cookieOption);
     res.redirect(
       `${this.configService.get<string>('CLIENT_URI')}?code=success`,
