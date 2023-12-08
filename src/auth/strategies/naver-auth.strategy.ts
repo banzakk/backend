@@ -21,10 +21,10 @@ export class NaverAuthStrategy extends PassportStrategy(Strategy, 'naver') {
   async validate(accessToken, refreshToken, profile) {
     const email = profile.emails[0].value;
     const name = profile.displayName;
-
     const socialUser = await this.usersService.getSocialUserByEmail(email);
-    let user = socialUser.user;
-    if (!user || (user && socialUser.type !== 'naver')) {
+    let user;
+    if (socialUser) user = socialUser.user;
+    if (!socialUser || (user && socialUser.socialType !== 'naver')) {
       user = await this.usersService.socialSignUpTransaction(
         email,
         name,
@@ -36,8 +36,8 @@ export class NaverAuthStrategy extends PassportStrategy(Strategy, 'naver') {
     return {
       name,
       email,
-      uid,
-      id,
+      userUid: uid,
+      userId: id,
     };
   }
 }

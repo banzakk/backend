@@ -22,10 +22,10 @@ export class KakaoAuthStrategy extends PassportStrategy(Strategy, 'kakao') {
     const { _json } = profile;
     const email = _json.kakao_account.email;
     const name = _json.kakao_account.profile.nickname;
-
     const socialUser = await this.usersService.getSocialUserByEmail(email);
-    let user = socialUser.user;
-    if (!user || (user && socialUser.type !== 'kakao')) {
+    let user;
+    if (socialUser) user = socialUser.user;
+    if (!socialUser || (user && socialUser.socialType !== 'kakao')) {
       user = await this.usersService.socialSignUpTransaction(
         email,
         name,
@@ -38,8 +38,8 @@ export class KakaoAuthStrategy extends PassportStrategy(Strategy, 'kakao') {
     return {
       name,
       email,
-      uid,
-      id,
+      userUid: uid,
+      userId: id,
     };
   }
 }
