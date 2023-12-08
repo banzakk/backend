@@ -22,8 +22,9 @@ export class NaverAuthStrategy extends PassportStrategy(Strategy, 'naver') {
     const email = profile.emails[0].value;
     const name = profile.displayName;
 
-    let user = await this.usersService.getSocialUserByEmail(email);
-    if (!user) {
+    const socialUser = await this.usersService.getSocialUserByEmail(email);
+    let user = socialUser.user;
+    if (!user || (user && socialUser.type !== 'naver')) {
       user = await this.usersService.socialSignUpTransaction(
         email,
         name,
