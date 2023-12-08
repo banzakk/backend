@@ -23,6 +23,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
       secretOrKey: configService.get<string>('REFRESH_JWT_SECRET'),
     });
   }
+
   async validate(payload) {
     const { userUid } = payload;
     const user = await this.usersService.getUserByUid(userUid);
