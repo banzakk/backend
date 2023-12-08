@@ -46,15 +46,29 @@ export class AuthService {
   }
 
   async saveRefreshTokenByUserId(userId: string, token: string): Promise<void> {
-    const decoded = this.jwtService.decode(token);
-    const exp = decoded.exp;
-    const now = Math.floor(Date.now() / 1000);
-    await this.redisClient.set(
-      `refresh_token:${userId}`,
-      token,
-      'EX',
-      exp - now,
-    );
+    try {
+      const decoded = this.jwtService.decode(token);
+      const exp = decoded.exp;
+      const now = Math.floor(Date.now() / 1000);
+      await this.redisClient.set(
+        `refresh_token:${userId}`,
+        token,
+        'EX',
+        exp - now,
+      );
+      console.log(`refresh_token:${userId} saved`);
+    } catch (err) {
+      console.error(`Error saving refresh_token:${userId}`);
+    }
+  }
+
+  async deleteRefreshTokenByUserId(userId: string): Promise<void> {
+    try {
+      await this.redisClient.del(`refresh_token:${userId}`);
+      console.log(`refresh_token:${userId}} deleted`);
+    } catch (err) {
+      console.error(`Error deleting refresh_token:${userId}`);
+    }
   }
 
   async getRefreshTokenByUserId(userId: string): Promise<string> {

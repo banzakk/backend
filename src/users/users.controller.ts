@@ -61,6 +61,11 @@ export class UsersController {
     };
   }
 
+  @Get('/logout')
+  async logout(@Request() req) {
+    await this.authService.deleteRefreshTokenByUserId(req.user.userId);
+  }
+
   @Public()
   @UseGuards(RefreshJwtGuard)
   @Post('/refresh-token')
@@ -133,10 +138,7 @@ export class UsersController {
       return;
     }
     const refreshToken = await this.authService.generateRefreshToken(req.user);
-    await this.authService.saveRefreshTokenByUserId(
-      req.user.userId,
-      refreshToken,
-    );
+    await this.authService.saveRefreshTokenByUserId(req.user.id, refreshToken);
     res.cookie('refreshToken', refreshToken, this.cookieOption);
     res.redirect(
       `${this.configService.get<string>('CLIENT_URI')}?code=success`,
