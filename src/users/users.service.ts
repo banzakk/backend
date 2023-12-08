@@ -139,13 +139,27 @@ export class UsersService {
     }
   }
 
-  async getSocialUserByEmail(email: string): Promise<User | undefined> {
+  async getSocialUserByEmail(email: string): Promise<any> {
     return await this.userSocialRepository
       .createQueryBuilder('userSocial')
       .leftJoinAndSelect('userSocial.user', 'user')
+      .leftJoinAndSelect('userSocial.socials', 'social')
       .where('userSocial.email = :email', { email })
       .getOne()
-      .then((userSocial) => userSocial?.user);
+      .then((userSocial) => {
+        if (userSocial) {
+          const { user, socials } = userSocial;
+          return {
+            user: {
+              id: user.id,
+              uid: user.uid,
+              name: user.name,
+              email: userSocial.email,
+            },
+            socialType: socials.type,
+          };
+        }
+      });
   }
 
   private async addUserHashTag(userId: number, hashTags: any) {
