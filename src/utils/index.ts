@@ -48,3 +48,19 @@ export const trimAll = (value: string): string => {
   const target = value.replace(/\s+/g, '');
   return target.trim();
 };
+
+/**
+ * @function allKeysExist 객체 키 값 존재 확인 함수
+ * @param obj 확인할 객체
+ * @param keyArr 키 값에 해당하는 값을 가지고 있는 배열
+ * @returns boolean
+ */
+export const allKeysExist = (
+  obj: { [key: string]: unknown },
+  keyArr: string[],
+): boolean => {
+  if (Object.keys(obj).length !== keyArr.length) {
+    return false;
+  }
+  return keyArr.every((key) => key in obj);
+};

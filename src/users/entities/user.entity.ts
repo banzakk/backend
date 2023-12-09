@@ -1,3 +1,4 @@
+import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
   Column,
@@ -21,10 +22,9 @@ import {
   UserMessageRoom,
   UserProfileImage,
   UserRole,
-  UserSocial,
   WalkingParty,
   WalkingPartyUser,
-} from '.';
+} from '../../models';
 
 @Entity('users')
 export class User {
@@ -34,13 +34,13 @@ export class User {
   @Column({ length: 10 })
   name: string;
 
-  @Column({ length: 14 })
+  @Column({ length: 14, nullable: true })
   user_custom_id: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, nullable: true })
   password: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   email: string;
 
   @Column({ length: 36 })

@@ -1,3 +1,4 @@
+import { User } from '@src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,7 +17,6 @@ import {
   WhisperImage,
 } from '../../models';
 import { Like } from '../../models/like.entity';
-import { User } from '../../models/user.entity';
 
 @Entity('whispers')
 export class Whisper {
