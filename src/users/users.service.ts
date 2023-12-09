@@ -2,12 +2,16 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserHashTag } from '@src/models';
+import { AuthType } from '@src/auth/types/auth-type';
+import { UserHashTag } from '@src/models';
+import { SocialsService } from '@src/socials/socials.service';
+import { UserSocial } from '@src/user-socials/entities/user-social.entity';
+import { UserSocialsService } from '@src/user-socials/user-socials.service';
+import { User } from '@src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 @Injectable()
@@ -16,6 +20,11 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(UserHashTag)
     private userHashTagRepository: Repository<UserHashTag>,
+    @InjectRepository(UserSocial)
+    private userSocialRepository: Repository<UserSocial>,
+    private readonly socialsService: SocialsService,
+    private readonly userSocialsService: UserSocialsService,
+    private dataSource: DataSource,
   ) {}
 
   async signup(createUserDto: CreateUserDto) {
@@ -29,32 +38,59 @@ export class UsersService {
     if (user && user.id && hashTags && hashTags.length > 0)
       await this.addUserHashTag(user.id, hashTags);
   }
+
+  async socialSignUpTransaction(email: string, name: string, type: AuthType) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const user = await this.createSocialUser(name, queryRunner);
+      const socialId = await this.socialsService.getSocialIdByType(type);
+      await this.userSocialsService.saveUserSocial(
+        socialId,
+        user.id,
+        email,
+        queryRunner,
+      );
+      await queryRunner.commitTransaction();
+      return user;
+    } catch (err) {
+      console.error(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
         where: { email },
       });
-      if (!user)
-        throw new NotFoundException(
-          `이메일이 ${email}인 사용자를 찾을 수 없습니다.`,
-        );
       return user;
     } catch (err) {
       console.error(err);
-      if (err instanceof NotFoundException) {
-        throw err;
-      }
       throw new InternalServerErrorException(
         '사용자 조회 중 오류가 발생했습니다.',
       );
     }
   }
-  private async createUser({
-    email,
-    name,
-    user_custom_id,
-    password,
-  }: CreateUserDto) {
+
+  async getUserByUid(userUid: string): Promise<User> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { uid: userUid },
+      });
+      return user;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async createUser({ email, name, user_custom_id, password }: CreateUserDto) {
     try {
       const hash = await bcrypt.hash(password, 12);
       const user = new User();
@@ -71,7 +107,25 @@ export class UsersService {
       );
     }
   }
-  private async isEmailExist(email: string) {
+
+  async createSocialUser(name: string, queryRunner: QueryRunner) {
+    try {
+      const user = new User();
+      user.name = name;
+      user.uid = uuid.v4();
+      if (!queryRunner) {
+        return await this.usersRepository.save(user);
+      }
+      return await queryRunner.manager.save(user);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 생성 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async isEmailExist(email: string): Promise<boolean> {
     try {
       const user = await this.usersRepository.findOne({
         where: { email },
@@ -84,6 +138,30 @@ export class UsersService {
       );
     }
   }
+
+  async getSocialUserByEmail(email: string): Promise<any> {
+    return await this.userSocialRepository
+      .createQueryBuilder('userSocial')
+      .leftJoinAndSelect('userSocial.user', 'user')
+      .leftJoinAndSelect('userSocial.socials', 'social')
+      .where('userSocial.email = :email', { email })
+      .getOne()
+      .then((userSocial) => {
+        if (userSocial) {
+          const { user, socials } = userSocial;
+          return {
+            user: {
+              id: user.id,
+              uid: user.uid,
+              name: user.name,
+              email: userSocial.email,
+            },
+            socialType: socials.type,
+          };
+        }
+      });
+  }
+
   private async addUserHashTag(userId: number, hashTags: any) {
     try {
       const hashes = hashTags.map((data) => ({

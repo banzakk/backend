@@ -1,14 +1,18 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { Redis } from 'ioredis';
 import { AuthInfo } from './types/auth-info';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
+    private configService: ConfigService,
     private jwtService: JwtService,
   ) {}
 
@@ -25,9 +29,49 @@ export class AuthService {
     return null;
   }
 
-  async generateToken(user: AuthInfo) {
-    return {
-      access_token: this.jwtService.sign(user),
-    };
+  generateToken(user: AuthInfo): string {
+    const accessToken = this.jwtService.sign(user);
+    return accessToken;
+  }
+
+  generateRefreshToken({ userUid }: Partial<AuthInfo>): string {
+    const refreshToken = this.jwtService.sign(
+      { userUid },
+      {
+        secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
+        expiresIn: '30d',
+      },
+    );
+    return refreshToken;
+  }
+
+  async saveRefreshTokenByUserId(userId: string, token: string): Promise<void> {
+    try {
+      const decoded = this.jwtService.decode(token);
+      const exp = decoded.exp;
+      const now = Math.floor(Date.now() / 1000);
+      await this.redisClient.set(
+        `refresh_token:${userId}`,
+        token,
+        'EX',
+        exp - now,
+      );
+      console.log(`refresh_token:${userId} saved`);
+    } catch (err) {
+      console.error(`Error saving refresh_token:${userId}`);
+    }
+  }
+
+  async deleteRefreshTokenByUserId(userId: string): Promise<void> {
+    try {
+      await this.redisClient.del(`refresh_token:${userId}`);
+      console.log(`refresh_token:${userId}} deleted`);
+    } catch (err) {
+      console.error(`Error deleting refresh_token:${userId}`);
+    }
+  }
+
+  async getRefreshTokenByUserId(userId: string): Promise<string> {
+    return await this.redisClient.get(`refresh_token:${userId}`);
   }
 }

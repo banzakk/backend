@@ -36,3 +36,7 @@ lerna-debug.log*
 
 # 환경변수
 .env
+
+# cert 파일
+localhost.crt
+localhost.key
