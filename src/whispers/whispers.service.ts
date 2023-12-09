@@ -4,17 +4,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@src/models/user.entity';
+import { User } from '@src/users/entities/user.entity';
 import { S3 } from 'aws-sdk';
 import { Repository } from 'typeorm';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { Whisper } from './entities/whisper.entity';
-
-interface UserDetails {
-  email: string;
-  userId: number;
-  userUid: string;
-}
 
 @Injectable()
 export class WhispersService {
@@ -24,7 +18,7 @@ export class WhispersService {
   ) {}
 
   async create(
-    user: UserDetails,
+    userId: number,
     createWhisperDto: CreateWhisperDto,
     image,
     imageBuffers,
@@ -34,7 +28,7 @@ export class WhispersService {
   ) {
     const { content } = createWhisperDto;
     return await this.saveWhisper(
-      user.userId,
+      userId,
       content,
       image,
       imageBuffers,
@@ -98,5 +92,17 @@ export class WhispersService {
       console.log(err);
       throw new InternalServerErrorException('위스퍼 작성에 실패하였습니다.');
     }
+  }
+
+  findAll() {
+    return `This action returns all whispers`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} whisper`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} whisper`;
   }
 }

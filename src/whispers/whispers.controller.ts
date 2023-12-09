@@ -1,6 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
+  Param,
   Post,
   Request,
   UploadedFiles,
@@ -26,8 +29,8 @@ export class WhispersController {
     @UploadedFiles() fileMimeTypes,
     @UploadedFiles() fileSize,
   ) {
-    const createWhisper = await this.whispersService.create(
-      req.user,
+    return await this.whispersService.create(
+      req.user.userId,
       createWhisperDto,
       image,
       imageBuffers,
@@ -35,8 +38,21 @@ export class WhispersController {
       fileMimeTypes,
       fileSize,
     );
+  }
 
-    console.log('createWhisper::', createWhisper);
-    return createWhisper;
+  @Get()
+  findAll() {
+    return this.whispersService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.whispersService.findOne(+id);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    // 삭제할 위스퍼 아이디
+    return this.whispersService.remove(+id);
   }
 }
