@@ -10,9 +10,7 @@ async function bootstrap() {
     key: fs.readFileSync('localhost.key'),
     cert: fs.readFileSync('localhost.crt'),
   };
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-  });
+  const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   app.enableCors({
     origin: 'https://localhost:3000',
