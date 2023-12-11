@@ -16,7 +16,7 @@ export class ValidationMessage {
   }
   /**
    * @param fieldName 아이디는, 비밀번호는 등 *조사 필수
-   * @returns ${fieldName} ${type} 이어야 합니다.
+   * @returns ${fieldName} 비울 수 없습니다.
    */
   notEmpty(fieldName: string): Message {
     return { message: `${fieldName} 비울 수 없습니다.` };
@@ -24,18 +24,45 @@ export class ValidationMessage {
   /**
    * @param fieldName 아이디는, 비밀번호는 등 *조사 필수
    * @param min 최소값
-   * @returns ${fieldName} ${type} 이어야 합니다.
+   * @returns ${fieldName} 최소 ${min}자 이상이어야 합니다.
    */
-  minIs(fieldName: string, min: number): Message {
-    return { message: `${fieldName} 최소 ${min}자 이상이어야 합니다.` };
+  minIs(fieldName: string, min: number, each: boolean): Message {
+    const messageObj = {
+      message: `${fieldName} 최소 ${min}자 이상이어야 합니다.`,
+    };
+    if (each) Object.assign(messageObj, { each });
+    return messageObj;
   }
   /**
    * @param fieldName 아이디는, 비밀번호는 등 *조사 필수
    * @param max 최대값
-   * @returns ${fieldName} ${type} 이어야 합니다.
+   * @param each 배열인지 아닌지 여부
+   * @returns ${fieldName} 최대 ${max}자 이하이어야 합니다.
    */
-  maxIs(fieldName: string, max: number): Message {
-    return { message: `${fieldName} 최대 ${max}자 이하이어야 합니다.` };
+  maxIs(fieldName: string, max: number, each: boolean): Message {
+    const messageObj = {
+      message: `${fieldName} 최대 ${max}자 이하이어야 합니다.`,
+    };
+    if (each) Object.assign(messageObj, { each });
+    return messageObj;
+  }
+  /**
+   * @param fieldName 아이디는, 비밀번호는 등 *조사 필수
+   * @param min 최소값
+   * @param each 배열인지 아닌지 여부
+   * @returns ${fieldName} 최소 ${min}개까지만 설정할 수 있습니다
+   */
+  arrayMinIs(fieldName: string, min: number) {
+    return { message: `${fieldName} 최소 ${min}개까지만 설정할 수 있습니다.` };
+  }
+  /**
+   * @param fieldName 아이디는, 비밀번호는 등 *조사 필수
+   * @param max 최대값
+   * @param each 배열인지 아닌지 여부
+   * @returns ${fieldName} 최대 ${max}개까지만 설정할 수 있습니다
+   */
+  arrayMaxIs(fieldName: string, max: number) {
+    return { message: `${fieldName} 최대 ${max}개까지만 설정할 수 있습니다.` };
   }
 }
 
