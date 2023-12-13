@@ -26,7 +26,7 @@ export class ValidationMessage {
    * @param min 최소값
    * @returns ${fieldName} 최소 ${min}자 이상이어야 합니다.
    */
-  minIs(fieldName: string, min: number, each: boolean): Message {
+  minIs(fieldName: string, min: number, each?: boolean): Message {
     const messageObj = {
       message: `${fieldName} 최소 ${min}자 이상이어야 합니다.`,
     };
@@ -39,7 +39,7 @@ export class ValidationMessage {
    * @param each 배열인지 아닌지 여부
    * @returns ${fieldName} 최대 ${max}자 이하이어야 합니다.
    */
-  maxIs(fieldName: string, max: number, each: boolean): Message {
+  maxIs(fieldName: string, max: number, each?: boolean): Message {
     const messageObj = {
       message: `${fieldName} 최대 ${max}자 이하이어야 합니다.`,
     };
