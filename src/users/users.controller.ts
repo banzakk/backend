@@ -57,9 +57,7 @@ export class UsersController {
   @Post('/email-check')
   async emailCheck(@Body(ValidationPipe) verifyUserDto: VerifyUserEmailDto) {
     const { email } = verifyUserDto;
-
     const user = await this.usersService.getUserByEmail(email);
-
     return { isExistUser: Boolean(user) };
   }
 
