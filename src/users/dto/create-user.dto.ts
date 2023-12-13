@@ -28,7 +28,7 @@ export class CreateUserDto {
   @Matches(/^[^#@\$%\^&]*$/, {
     message: '아이디에는 #, @, $, %, ^, & 기호를 사용할 수 없습니다.',
   })
-  user_custom_id: string;
+  userCustomId: string;
 
   @Transform((params) => trimAll(params.value))
   @IsString(message.typeIs('비밀번호는', '문자열'))
