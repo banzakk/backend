@@ -29,7 +29,7 @@ export class WhispersController {
     @UploadedFiles() fileMimeTypes,
     @UploadedFiles() fileSize,
   ) {
-    return await this.whispersService.create(
+    return await this.whispersService.createWhisper(
       req.user.userId,
       createWhisperDto,
       image,

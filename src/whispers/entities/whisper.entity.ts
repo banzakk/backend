@@ -1,4 +1,5 @@
 import { User } from '@src/users/entities/user.entity';
+import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,12 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  DeletedWhisper,
-  Rewhisper,
-  WhisperHashTag,
-  WhisperImage,
-} from '../../models';
+import { DeletedWhisper, Rewhisper, WhisperHashTag } from '../../models';
 import { Like } from '../../models/like.entity';
 
 @Entity('whispers')
