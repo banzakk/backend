@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { FollowsModule } from './follows/follows.module';
 import { RedisModule } from './redis.module';
 import { UsersModule } from './users/users.module';
 @Module({
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
     RedisModule,
     UsersModule,
     AuthModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [
