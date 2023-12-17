@@ -23,7 +23,7 @@ import { UsersModule } from './users/users.module';
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     RedisModule,
     UsersModule,
