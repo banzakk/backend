@@ -76,6 +76,23 @@ export class UsersService {
     }
   }
 
+  async getUserByCustomId(userCustomId: string): Promise<string> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { user_custom_id: userCustomId },
+      });
+      if (user) {
+        return user.user_custom_id;
+      }
+      return '';
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
   async getUserByUid(userUid: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -90,13 +107,13 @@ export class UsersService {
     }
   }
 
-  async createUser({ email, name, user_custom_id, password }: CreateUserDto) {
+  async createUser({ email, name, userCustomId, password }: CreateUserDto) {
     try {
       const hash = await bcrypt.hash(password, 12);
       const user = new User();
       user.name = name;
       user.email = email;
-      user.user_custom_id = user_custom_id;
+      user.user_custom_id = userCustomId;
       user.password = hash;
       user.uid = uuid.v4();
       await this.usersRepository.save(user);

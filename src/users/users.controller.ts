@@ -19,6 +19,7 @@ import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
 import { allKeysExist } from '@src/utils';
 import { CreateUserDto } from './dto/create-user.dto';
+import { VerifyUserEmailDto, VerifyUserIdDto } from './dto/verify-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -42,6 +43,22 @@ export class UsersController {
   async create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
     await this.usersService.signup(createUserDto);
     return 'ok';
+  }
+
+  @Public()
+  @Post('/id-check')
+  async idCheck(@Body(ValidationPipe) verifyUserDto: VerifyUserIdDto) {
+    const { userCustomId } = verifyUserDto;
+    const user = await this.usersService.getUserByCustomId(userCustomId);
+    return { isExistUser: Boolean(user) };
+  }
+
+  @Public()
+  @Post('/email-check')
+  async emailCheck(@Body(ValidationPipe) verifyUserDto: VerifyUserEmailDto) {
+    const { email } = verifyUserDto;
+    const user = await this.usersService.getUserByEmail(email);
+    return { isExistUser: Boolean(user) };
   }
 
   @Public()
