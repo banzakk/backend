@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Request } from '@nestjs/common';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { FollowsService } from './follows.service';
 
@@ -31,5 +31,12 @@ export class FollowsController {
       followings: data,
       followingCount: data.length,
     };
+  }
+
+  @Delete('/:id')
+  async delete(@Request() req, @Param() deleteFollowDto: CreateFollowDto) {
+    const { userId } = req.user;
+    await this.followsService.deleteFollow(deleteFollowDto, userId);
+    return { message: '팔로우가 해제되었습니다.' };
   }
 }

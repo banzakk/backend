@@ -20,6 +20,11 @@ export class FollowsService {
     await this.createFollow(id, userId);
   }
 
+  async deleteFollow(deleteFollowDto: CreateFollowDto, userId: number) {
+    const { id } = deleteFollowDto;
+    await this.deleteFollowByIdAndUserId(id, userId);
+  }
+
   async createFollow(id: number, userId: number): Promise<void> {
     try {
       const follower = await this.usersRepository.findOneBy({ id });
@@ -79,5 +84,22 @@ export class FollowsService {
         }
       });
     return data;
+  }
+
+  async deleteFollowByIdAndUserId(id: number, userId: number) {
+    const follower = await this.usersRepository.findOneBy({ id: userId });
+    const following = await this.usersRepository.findOneBy({ id });
+
+    if (!follower || !following) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    await this.followsRepository
+      .createQueryBuilder('follow')
+      .delete()
+      .from(Follow)
+      .where('followed_user_id = :follower', { follower: follower.id })
+      .andWhere('following_user_id = :following', { following: following.id })
+      .execute();
   }
 }
