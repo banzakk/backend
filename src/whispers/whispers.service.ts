@@ -4,6 +4,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HashTagStatus } from '@src/hash-tag-status/entities/hash-tag-status.entity';
+import { CreateHashTagDto } from '@src/hash-tags/dto/create-hash-tag.dto';
+import { HashTags } from '@src/hash-tags/entities/hash-tag.entity';
 import { User } from '@src/users/entities/user.entity';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
@@ -17,12 +20,17 @@ export class WhispersService {
   constructor(
     @Inject('S3_INSTANCE') private readonly s3: S3,
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
+    @InjectRepository(HashTags)
+    private HashTagsRepository: Repository<HashTags>,
+    @InjectRepository(HashTagStatus)
+    private HashTagStatusRepository: Repository<HashTagStatus>,
     private readonly whisperImagesService: WhisperImagesService,
   ) {}
 
   async createWhisper(
     userId: number,
     createWhisperDto: CreateWhisperDto,
+    createHashTagDto: CreateHashTagDto,
     image,
     imageBuffers,
     fileNames,
@@ -30,9 +38,11 @@ export class WhispersService {
     fileSize,
   ) {
     const { content } = createWhisperDto;
+    const { hashTag } = createHashTagDto;
     return await this.saveWhisper(
       userId,
       content,
+      hashTag,
       image,
       imageBuffers,
       fileNames,
@@ -44,6 +54,7 @@ export class WhispersService {
   private async saveWhisper(
     userId: number,
     content: string,
+    hashTag: string,
     image,
     imageBuffers,
     fileNames,
@@ -58,8 +69,20 @@ export class WhispersService {
       whisper.user = user;
       whisper.content = content;
 
+      if (hashTag && Array.isArray(hashTag) && hashTag.length > 0) {
+        const userStatus = await this.HashTagStatusRepository.findOne({
+          where: { id: 2 },
+        });
+        for (const tag of hashTag) {
+          const hashTags = new HashTags();
+          hashTags.name = tag;
+          hashTags.hash_tag_status = userStatus;
+          await this.HashTagsRepository.save(hashTags);
+        }
+      }
+
       if (image && image.length > 0) {
-        const imageObjects = image.map((image, index) => ({
+        const imageObjects = image.map((image, index: number) => ({
           buffer: imageBuffers[index].buffer,
           originalname: fileNames[index].originalname,
           mimeType: fileMimeTypes[index].mimetype,
