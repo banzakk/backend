@@ -40,6 +40,9 @@ export class FollowsService {
       await this.followsRepository.save(follow);
     } catch (err) {
       console.error(err);
+      if (err instanceof NotFoundException) {
+        throw err;
+      }
       throw new InternalServerErrorException(
         '팔로우 생성 중 오류가 발생했습니다.',
       );
@@ -87,19 +90,29 @@ export class FollowsService {
   }
 
   async deleteFollowByIdAndUserId(id: number, userId: number) {
-    const follower = await this.usersRepository.findOneBy({ id: userId });
-    const following = await this.usersRepository.findOneBy({ id });
+    try {
+      const follower = await this.usersRepository.findOneBy({ id: userId });
+      const following = await this.usersRepository.findOneBy({ id });
 
-    if (!follower || !following) {
-      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      if (!follower || !following) {
+        throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      }
+
+      await this.followsRepository
+        .createQueryBuilder('follow')
+        .delete()
+        .from(Follow)
+        .where('followed_user_id = :follower', { follower: follower.id })
+        .andWhere('following_user_id = :following', { following: following.id })
+        .execute();
+    } catch (err) {
+      console.error(err);
+      if (err instanceof NotFoundException) {
+        throw err;
+      }
+      throw new InternalServerErrorException(
+        '팔로우 해제 중 오류가 발생했습니다.',
+      );
     }
-
-    await this.followsRepository
-      .createQueryBuilder('follow')
-      .delete()
-      .from(Follow)
-      .where('followed_user_id = :follower', { follower: follower.id })
-      .andWhere('following_user_id = :following', { following: following.id })
-      .execute();
   }
 }
