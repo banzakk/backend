@@ -1,9 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
-  Param,
   Post,
   Request,
   UploadedFiles,
@@ -24,12 +21,12 @@ export class WhispersController {
   async create(
     @Request() req,
     @Body(new ValidationPipe()) createWhisperDto: CreateWhisperDto,
-    @Body(new ValidationPipe()) createHashTagDto: CreateHashTagDto,
     @UploadedFiles() image,
     @UploadedFiles() imageBuffers,
     @UploadedFiles() fileNames,
     @UploadedFiles() fileMimeTypes,
     @UploadedFiles() fileSize,
+    @Body(new ValidationPipe()) createHashTagDto?: CreateHashTagDto,
   ) {
     return await this.whispersService.createWhisper(
       req.user.userId,
@@ -41,21 +38,5 @@ export class WhispersController {
       fileMimeTypes,
       fileSize,
     );
-  }
-
-  @Get()
-  findAll() {
-    return this.whispersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.whispersService.findOne(+id);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    // 삭제할 위스퍼 아이디
-    return this.whispersService.remove(+id);
   }
 }
