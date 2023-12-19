@@ -1,3 +1,4 @@
+import { Follow } from '@src/follows/entities/follow.entity';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
@@ -12,7 +13,6 @@ import {
 } from 'typeorm';
 import {
   Block,
-  Follow,
   Like,
   Market,
   Message,
@@ -25,7 +25,6 @@ import {
   WalkingParty,
   WalkingPartyUser,
 } from '../../models';
-
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
