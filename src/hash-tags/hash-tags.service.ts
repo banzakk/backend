@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagStatus } from '@src/hash-tag-status/entities/hash-tag-status.entity';
 import { Repository } from 'typeorm';
-import { UpdateHashTagDto } from './dto/update-hash-tag.dto';
 import { HashTags } from './entities/hash-tag.entity';
 
 @Injectable()
@@ -34,21 +33,5 @@ export class HashTagsService {
       hashTagArr.push(createHashTags.id);
     }
     return hashTagArr;
-  }
-
-  findAll() {
-    return `This action returns all hashTags`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} hashTag`;
-  }
-
-  update(id: number, updateHashTagDto: UpdateHashTagDto) {
-    return `This action updates a #${id} hashTag`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} hashTag`;
   }
 }
