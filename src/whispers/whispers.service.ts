@@ -105,9 +105,9 @@ export class WhispersService {
 
       if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
         let hashTagIdArr: number[] | undefined;
+        hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
 
         if (hashTagIdArr !== undefined) {
-          hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
           await this.whisperHashTagService.createWhisperHashTag(
             whisper.id,
             hashTagIdArr,
