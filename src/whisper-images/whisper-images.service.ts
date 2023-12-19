@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
 import { Repository } from 'typeorm';
 import { CreateWhisperImageDto } from './dto/create-whisper-image.dto';
-import { UpdateWhisperImageDto } from './dto/update-whisper-image.dto';
 import { WhisperImage } from './entities/whisper-image.entity';
 
 @Injectable()
@@ -31,23 +30,7 @@ export class WhisperImagesService {
       whisperImage.url = imageUrl;
       whisperImage.whisper = whisper;
       await this.whisperImagesRepository.save(whisperImage);
+      return 'Whisper image creation successful';
     }
-    return 'Whisper image creation successful';
-  }
-
-  findAll() {
-    return `This action returns all whisperImages`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} whisperImage`;
-  }
-
-  update(id: number, updateWhisperImageDto: UpdateWhisperImageDto) {
-    return `This action updates a #${id} whisperImage`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} whisperImage`;
   }
 }
