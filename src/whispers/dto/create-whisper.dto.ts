@@ -1,4 +1,3 @@
-// import { ArrayElementCount } from '@src/decorators/ArrayElementCount.decorator';
 import { ArrayElementCount } from '@src/decorators/ArrayElementCount.decorator';
 import { CreateHashTagDto } from '@src/hash-tags/dto/create-hash-tag.dto';
 import { ValidationMessage } from '@src/utils';
