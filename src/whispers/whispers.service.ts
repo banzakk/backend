@@ -64,11 +64,6 @@ export class WhispersService {
 
       const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
 
-      let hashTagIdArr: number[];
-      if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
-        hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
-      }
-
       if (image && image.length > 0) {
         const imageObjects = image.map((image, index: number) => ({
           buffer: imageBuffers[index].buffer,
@@ -103,10 +98,19 @@ export class WhispersService {
         };
       }
       await this.whispersRepository.save(whisper);
-      await this.whisperHashTagService.createWhisperHashTag(
-        whisper.id,
-        hashTagIdArr,
-      );
+
+      if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
+        let hashTagIdArr: number[] | undefined;
+
+        if (hashTagIdArr !== undefined) {
+          hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
+          await this.whisperHashTagService.createWhisperHashTag(
+            whisper.id,
+            hashTagIdArr,
+          );
+        }
+      }
+
       return 'Whisper creation successful';
     } catch (err) {
       console.log(err);
