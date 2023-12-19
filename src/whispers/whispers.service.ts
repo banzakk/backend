@@ -4,9 +4,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateHashTagDto } from '@src/hash-tags/dto/create-hash-tag.dto';
 import { HashTagsService } from '@src/hash-tags/hash-tags.service';
 import { User } from '@src/users/entities/user.entity';
+import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
 import { S3 } from 'aws-sdk';
@@ -21,6 +21,7 @@ export class WhispersService {
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,
+    private readonly whisperHashTagService: WhisperHashTagService,
   ) {}
 
   async createWhisper(
@@ -31,34 +32,29 @@ export class WhispersService {
     fileNames,
     fileMimeTypes,
     fileSize,
-    createHashTagDto?: CreateHashTagDto,
   ) {
-    const { content } = createWhisperDto;
-    const { hashTag } = createHashTagDto;
-    console.log('hashTag:::::', hashTag);
     return await this.saveWhisper(
       userId,
-      content,
+      createWhisperDto,
       image,
       imageBuffers,
       fileNames,
       fileMimeTypes,
       fileSize,
-      hashTag,
     );
   }
 
   private async saveWhisper(
     userId: number,
-    content: string,
+    createWhisperDto,
     image,
     imageBuffers,
     fileNames,
     fileMimeTypes,
     fileSize,
-    hashTag?: string,
   ) {
     try {
+      const { content, hashTag } = createWhisperDto;
       const user = await this.whispersRepository.manager.findOne(User, {
         where: { id: userId },
       });
@@ -66,10 +62,11 @@ export class WhispersService {
       whisper.user = user;
       whisper.content = content;
 
-      console.log(hashTag);
+      const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
 
-      if (hashTag && Array.isArray(hashTag) && hashTag.length > 0) {
-        await this.hashTagsService.createHashTag(hashTag);
+      let hashTagIdArr: number[];
+      if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
+        hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
       }
 
       if (image && image.length > 0) {
@@ -100,34 +97,20 @@ export class WhispersService {
         await this.whispersRepository.save(whisper);
         await this.whisperImagesService.createImage(whisper.id, imageUrlDto);
 
-        // const createHashTag = await this.HashTagStatusRepository.findOne({
-        //   where: { id: whisper.id },
-        // });
-
-        // await this.whisperHashTagRepository.save(whisper.id, createHashTag);
-
         return {
           imageUrl: imageUrl,
           message: 'Whisper creation successful',
         };
       }
       await this.whispersRepository.save(whisper);
+      await this.whisperHashTagService.createWhisperHashTag(
+        whisper.id,
+        hashTagIdArr,
+      );
       return 'Whisper creation successful';
     } catch (err) {
       console.log(err);
       throw new InternalServerErrorException('위스퍼 작성에 실패하였습니다.');
     }
-  }
-
-  findAll() {
-    return `This action returns all whispers`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} whisper`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} whisper`;
   }
 }

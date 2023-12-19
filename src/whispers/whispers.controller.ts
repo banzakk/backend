@@ -8,7 +8,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { CreateHashTagDto } from '@src/hash-tags/dto/create-hash-tag.dto';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { WhispersService } from './whispers.service';
 
@@ -26,12 +25,10 @@ export class WhispersController {
     @UploadedFiles() fileNames,
     @UploadedFiles() fileMimeTypes,
     @UploadedFiles() fileSize,
-    @Body(new ValidationPipe()) createHashTagDto?: CreateHashTagDto,
   ) {
     return await this.whispersService.createWhisper(
       req.user.userId,
       createWhisperDto,
-      createHashTagDto,
       image,
       imageBuffers,
       fileNames,
