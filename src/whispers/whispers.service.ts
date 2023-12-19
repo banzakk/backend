@@ -10,7 +10,7 @@ import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.se
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
 import { S3 } from 'aws-sdk';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { Whisper } from './entities/whisper.entity';
 
@@ -22,6 +22,7 @@ export class WhispersService {
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,
     private readonly whisperHashTagService: WhisperHashTagService,
+    private dataSource: DataSource,
   ) {}
 
   async createWhisper(
@@ -53,6 +54,9 @@ export class WhispersService {
     fileMimeTypes,
     fileSize,
   ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const { content, hashTag } = createWhisperDto;
       const user = await this.whispersRepository.manager.findOne(User, {
@@ -61,8 +65,6 @@ export class WhispersService {
       const whisper = new Whisper();
       whisper.user = user;
       whisper.content = content;
-
-      const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
 
       if (image && image.length > 0) {
         const imageObjects = image.map((image, index: number) => ({
@@ -99,6 +101,8 @@ export class WhispersService {
       }
       await this.whispersRepository.save(whisper);
 
+      const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
+
       if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
         let hashTagIdArr: number[] | undefined;
 
@@ -110,11 +114,14 @@ export class WhispersService {
           );
         }
       }
-
+      await queryRunner.commitTransaction();
       return 'Whisper creation successful';
     } catch (err) {
       console.log(err);
+      await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException('위스퍼 작성에 실패하였습니다.');
+    } finally {
+      await queryRunner.release();
     }
   }
 }
