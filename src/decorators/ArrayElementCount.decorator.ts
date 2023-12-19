@@ -19,7 +19,11 @@ export function ArrayElementCount(
       options: validationOptions,
       validator: {
         validate(value: any[]) {
-          return Array.isArray(value) && value.length === max;
+          if (Array.isArray(value) && value.length > max) {
+            return false;
+          } else {
+            return true;
+          }
         },
         defaultMessage() {
           return `${fieldName} 최대 ${max}개까지만 설정할 수 있습니다.`;
