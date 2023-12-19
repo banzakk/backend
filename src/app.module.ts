@@ -9,7 +9,9 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { FollowsModule } from './follows/follows.module';
 import { RedisModule } from './redis.module';
+import { S3Module } from './s3.module';
 import { UsersModule } from './users/users.module';
+import { WhispersModule } from './whispers/whispers.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,9 +28,12 @@ import { UsersModule } from './users/users.module';
       synchronize: false,
     }),
     RedisModule,
+    S3Module,
     UsersModule,
     AuthModule,
     FollowsModule,
+    WhispersModule,
+
   ],
   controllers: [AppController],
   providers: [

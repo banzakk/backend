@@ -21,4 +21,3 @@ export * from './walking-party-status.entity';
 export * from './walking-party-user.entity';
 export * from './walking-party.entity';
 export * from './whisper-hash-tag.entity';
-export * from './whisper-image.entity';
