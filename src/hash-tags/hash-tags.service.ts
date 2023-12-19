@@ -16,20 +16,24 @@ export class HashTagsService {
 
   async createHashTag(hashTag) {
     const statusId: number = 2;
-    await this.createWhisperHashTag(hashTag, statusId);
+    return await this.createWhisperHashTag(hashTag, statusId);
   }
 
   async createWhisperHashTag(hashTag, statusId) {
     const userStatus = await this.HashTagStatusRepository.findOne({
       where: { id: statusId },
     });
+
+    const hashTagArr: number[] = [];
     for (const tag of hashTag) {
       const hashTags = new HashTags();
       hashTags.name = tag;
       hashTags.hash_tag_status = userStatus;
-      await this.hashTagRepository.save(hashTags);
+      const createHashTags: HashTags =
+        await this.hashTagRepository.save(hashTags);
+      hashTagArr.push(createHashTags.id);
     }
-    return console.log('Hashtag saved successfully');
+    return hashTagArr;
   }
 
   findAll() {
