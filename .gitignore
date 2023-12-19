@@ -40,3 +40,4 @@ lerna-debug.log*
 # cert 파일
 localhost.crt
 localhost.key
+*.pem
