@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { FollowsModule } from './follows/follows.module';
 import { RedisModule } from './redis.module';
 import { S3Module } from './s3.module';
+import { UserHashTagsModule } from './user-hash-tags/user-hash-tags.module';
 import { UsersModule } from './users/users.module';
 import { WhispersModule } from './whispers/whispers.module';
 @Module({
@@ -33,7 +34,7 @@ import { WhispersModule } from './whispers/whispers.module';
     AuthModule,
     FollowsModule,
     WhispersModule,
-
+    UserHashTagsModule,
   ],
   controllers: [AppController],
   providers: [

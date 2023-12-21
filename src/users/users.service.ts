@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
-import { UserHashTag } from '@src/models';
 import { SocialsService } from '@src/socials/socials.service';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
@@ -18,8 +17,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(UserHashTag)
-    private userHashTagRepository: Repository<UserHashTag>,
     @InjectRepository(UserSocial)
     private userSocialRepository: Repository<UserSocial>,
     private readonly socialsService: SocialsService,
@@ -28,15 +25,12 @@ export class UsersService {
   ) {}
 
   async signup(createUserDto: CreateUserDto) {
-    const { email, hashTags } = createUserDto;
+    const { email } = createUserDto;
     const userExist = await this.isEmailExist(email);
     if (userExist) {
       throw new BadRequestException('해당 email로는 가입할 수 없습니다.');
     }
     await this.createUser(createUserDto);
-    const user = await this.getUserByEmail(email);
-    if (user && user.id && hashTags && hashTags.length > 0)
-      await this.addUserHashTag(user.id, hashTags);
   }
 
   async socialSignUpTransaction(email: string, name: string, type: AuthType) {
@@ -177,21 +171,5 @@ export class UsersService {
           };
         }
       });
-  }
-
-  private async addUserHashTag(userId: number, hashTags: any) {
-    try {
-      const hashes = hashTags.map((data) => ({
-        user: userId,
-        hash_tag: data,
-      }));
-      const userHashTags = await this.userHashTagRepository.create(hashes);
-      await this.userHashTagRepository.save(userHashTags);
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException(
-        '해시태그 추가 중 오류가 발생했습니다.',
-      );
-    }
   }
 }
