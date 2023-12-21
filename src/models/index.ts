@@ -13,7 +13,6 @@ export * from './product.entity';
 export * from './rewhisper.entity';
 export * from './state.entity';
 export * from './town.entity';
-export * from './user-hash-tag.entity';
 export * from './user-message-room.entity';
 export * from './user-profile-image.entity';
 export * from './user-role.entity';
