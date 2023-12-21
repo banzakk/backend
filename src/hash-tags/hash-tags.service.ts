@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagStatus } from '@src/hash-tag-status/entities/hash-tag-status.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { HashTags } from './entities/hash-tag.entity';
 
 @Injectable()
@@ -33,5 +33,14 @@ export class HashTagsService {
       hashTagArr.push(createHashTags.id);
     }
     return hashTagArr;
+  }
+
+  async getHashTagByName(names) {
+    const hashTags = await this.hashTagRepository.find({
+      where: {
+        name: In(names),
+      },
+    });
+    return hashTags;
   }
 }
