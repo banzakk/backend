@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@src/auth/auth.module';
+import { FollowsModule } from '@src/follows/follows.module';
 import { SocialsModule } from '@src/socials/socials.module';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsModule } from '@src/user-socials/user-socials.module';
@@ -14,6 +15,7 @@ import { UsersService } from './users.service';
     forwardRef(() => AuthModule),
     SocialsModule,
     UserSocialsModule,
+    FollowsModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

@@ -149,6 +149,12 @@ export class UsersController {
     return this.handleCallback(req, res);
   }
 
+  @Get('/user')
+  async getMyData(@Request() req) {
+    const { email, userId } = req.user;
+    return await this.usersService.getUserData(email, userId);
+  }
+
   private async handleCallback(req, res) {
     if (!allKeysExist(req.user, ['name', 'email', 'userUid', 'userId'])) {
       res.redirect(`${this.configService.get<string>('CLIENT_URI')}?code=fail`);

@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
+import { FollowsService } from '@src/follows/follows.service';
 import { SocialsService } from '@src/socials/socials.service';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
@@ -21,6 +23,7 @@ export class UsersService {
     private userSocialRepository: Repository<UserSocial>,
     private readonly socialsService: SocialsService,
     private readonly userSocialsService: UserSocialsService,
+    private readonly followsService: FollowsService,
     private dataSource: DataSource,
   ) {}
 
@@ -56,6 +59,31 @@ export class UsersService {
     }
   }
 
+  async getUserData(email, userId) {
+    try {
+      const user = await this.getUserByEmail(email);
+      const followings =
+        await this.followsService.getFollowingsByUserId(userId);
+      const followers = await this.followsService.getFollowersByUserId(userId);
+      if (!user) throw new NotFoundException();
+      return {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          userCustomId: user.user_custom_id,
+        },
+        followingCount: followings.length,
+        followerCount: followers.length,
+      };
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -70,15 +98,12 @@ export class UsersService {
     }
   }
 
-  async getUserByCustomId(userCustomId: string): Promise<string> {
+  async getUserByCustomId(userCustomId: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
         where: { user_custom_id: userCustomId },
       });
-      if (user) {
-        return user.user_custom_id;
-      }
-      return '';
+      return user;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
