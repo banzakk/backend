@@ -159,7 +159,6 @@ export class UsersController {
   @Get('/:userCustomId')
   async getUserData(@Request() req, @Param() param) {
     const { userCustomId } = param;
-    console.log(req.user.userId);
 
     const { email, id } =
       await this.usersService.getUserByCustomId(userCustomId);
