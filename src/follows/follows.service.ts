@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@src/users/entities/user.entity';
+import { FollowUserData } from '@src/users/types/users';
 import { Repository } from 'typeorm';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { Follow } from './entities/follow.entity';
@@ -49,7 +50,9 @@ export class FollowsService {
     }
   }
 
-  async getFollowersByUserId(userId: number): Promise<Partial<User>[]> {
+  async getFollowersByUserId(
+    userId: number,
+  ): Promise<Partial<FollowUserData>[]> {
     const data = await this.followsRepository
       .createQueryBuilder('follow')
       .leftJoinAndSelect('follow.following', 'user')
@@ -69,7 +72,9 @@ export class FollowsService {
     return data;
   }
 
-  async getFollowingsByUserId(userId: number): Promise<Partial<User>[]> {
+  async getFollowingsByUserId(
+    userId: number,
+  ): Promise<Partial<FollowUserData>[]> {
     const data = await this.followsRepository
       .createQueryBuilder('follow')
       .leftJoinAndSelect('follow.follower', 'user')

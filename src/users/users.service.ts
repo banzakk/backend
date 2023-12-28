@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserData } from './types/users';
 @Injectable()
 export class UsersService {
   constructor(
@@ -59,14 +60,18 @@ export class UsersService {
     }
   }
 
-  async getUserData(email, userId) {
+  async getUserData(
+    email: string,
+    userId: number,
+    myId?: number,
+  ): Promise<UserData> {
     try {
       const user = await this.getUserByEmail(email);
       const followings =
         await this.followsService.getFollowingsByUserId(userId);
       const followers = await this.followsService.getFollowersByUserId(userId);
       if (!user) throw new NotFoundException();
-      return {
+      let result = {
         user: {
           id: user.id,
           name: user.name,
@@ -76,6 +81,16 @@ export class UsersService {
         followingCount: followings.length,
         followerCount: followers.length,
       };
+
+      if (myId) {
+        const myFollowings =
+          await this.followsService.getFollowingsByUserId(myId);
+        const isFollowingUser = Boolean(
+          myFollowings.find((data) => data.userId === userId),
+        );
+        result = Object.assign(result, { isFollowingUser });
+      }
+      return result;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(

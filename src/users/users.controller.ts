@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   Response,
@@ -153,6 +154,16 @@ export class UsersController {
   async getMyData(@Request() req) {
     const { email, userId } = req.user;
     return await this.usersService.getUserData(email, userId);
+  }
+
+  @Get('/:userCustomId')
+  async getUserData(@Request() req, @Param() param) {
+    const { userCustomId } = param;
+    console.log(req.user.userId);
+
+    const { email, id } =
+      await this.usersService.getUserByCustomId(userCustomId);
+    return await this.usersService.getUserData(email, id, req.user.userId);
   }
 
   private async handleCallback(req, res) {
