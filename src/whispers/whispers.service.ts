@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagsService } from '@src/hash-tags/hash-tags.service';
+import { ImageService } from '@src/image/image.service';
 import { User } from '@src/users/entities/user.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
@@ -22,6 +23,7 @@ export class WhispersService {
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,
     private readonly whisperHashTagService: WhisperHashTagService,
+    private readonly imageService: ImageService,
     private dataSource: DataSource,
   ) {}
 
@@ -67,35 +69,18 @@ export class WhispersService {
       whisper.content = content;
 
       if (image && image.length > 0) {
-        const imageObjects = image.map((image, index: number) => ({
-          buffer: imageBuffers[index].buffer,
-          originalname: fileNames[index].originalname,
-          mimeType: fileMimeTypes[index].mimetype,
-          size: fileSize[index].size,
-        }));
-
-        const uploadPromises = imageObjects.map(async (imageObject) => {
-          const key = `whisper_images/${Date.now()}_${
-            imageObject.originalname
-          }`;
-          const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: key,
-            Body: imageObject.buffer,
-            ACL: 'private',
-            ContentType: imageObject.mimeType,
-          };
-
-          const result = await this.s3.upload(params).promise();
-          return result.Location;
-        });
-        const imageUrl: string[] = await Promise.all(uploadPromises);
+        const imageUrl = await this.imageService.createImage(
+          image,
+          imageBuffers,
+          fileNames,
+          fileMimeTypes,
+          fileSize,
+        );
         const imageUrlDto: CreateWhisperImageDto = { url: imageUrl };
         await this.whispersRepository.save(whisper);
         await this.whisperImagesService.createImage(whisper.id, imageUrlDto);
 
         return {
-          imageUrl: imageUrl,
           message: 'Whisper creation successful',
         };
       }
