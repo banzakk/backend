@@ -1,5 +1,6 @@
 import { Follow } from '@src/follows/entities/follow.entity';
 import { UserHashTag } from '@src/user-hash-tags/entities/user-hash-tag.entity';
+import { UserProfileImage } from '@src/user-profile-images/entities/user-profile-image.entity';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
 import {
@@ -20,7 +21,6 @@ import {
   Rewhisper,
   State,
   UserMessageRoom,
-  UserProfileImage,
   UserRole,
   WalkingParty,
   WalkingPartyUser,
