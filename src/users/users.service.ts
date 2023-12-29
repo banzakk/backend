@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
 import { FollowsService } from '@src/follows/follows.service';
 import { SocialsService } from '@src/socials/socials.service';
+import { UserProfileImage } from '@src/user-profile-images/entities/user-profile-image.entity';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
 import { User } from '@src/users/entities/user.entity';
@@ -211,5 +212,31 @@ export class UsersService {
           };
         }
       });
+  }
+
+  async updateUserProfileImageId(
+    id: number,
+    imageId: UserProfileImage,
+    queryRunner?: QueryRunner,
+  ) {
+    try {
+      if (queryRunner) {
+        await queryRunner.manager.update(
+          User,
+          { id },
+          { user_profile_image: imageId },
+        );
+      } else {
+        await this.usersRepository.update(
+          { id },
+          { user_profile_image: imageId },
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '유저 정보 업데이트에 실패했습니다.',
+      );
+    }
   }
 }
