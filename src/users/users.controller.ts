@@ -42,8 +42,10 @@ export class UsersController {
   @Public()
   @Post('/signup')
   async create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    await this.usersService.signup(createUserDto);
-    return 'ok';
+    const userData = await this.usersService.signup(createUserDto);
+    return {
+      userCustomId: userData.user_custom_id,
+    };
   }
 
   @Public()

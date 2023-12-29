@@ -35,7 +35,7 @@ export class UsersService {
     if (userExist) {
       throw new BadRequestException('해당 email로는 가입할 수 없습니다.');
     }
-    await this.createUser(createUserDto);
+    return await this.createUser(createUserDto);
   }
 
   async socialSignUpTransaction(email: string, name: string, type: AuthType) {
@@ -151,7 +151,8 @@ export class UsersService {
       user.user_custom_id = userCustomId;
       user.password = hash;
       user.uid = uuid.v4();
-      await this.usersRepository.save(user);
+      const result = await this.usersRepository.save(user);
+      return result;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
