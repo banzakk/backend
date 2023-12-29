@@ -68,6 +68,8 @@ export class WhispersService {
       whisper.user = user;
       whisper.content = content;
 
+      const path: string = 'whisper_images';
+
       if (image && image.length > 0) {
         const imageUrl = await this.imageService.createImage(
           image,
@@ -75,6 +77,7 @@ export class WhispersService {
           fileNames,
           fileMimeTypes,
           fileSize,
+          path,
         );
         const imageUrlDto: CreateWhisperImageDto = { url: imageUrl };
         await this.whispersRepository.save(whisper);
