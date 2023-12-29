@@ -15,7 +15,7 @@ export class UserProfileImagesController {
   constructor(
     private readonly userProfileImagesService: UserProfileImagesService,
   ) {}
-  // @todo: 회원가입시 유저아이디 넘겨야됨
+
   @Post()
   @UseInterceptors(FilesInterceptor('image'))
   async create(
