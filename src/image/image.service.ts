@@ -5,7 +5,14 @@ import { S3 } from 'aws-sdk';
 export class ImageService {
   constructor(@Inject('S3_INSTANCE') private readonly s3: S3) {}
 
-  async createImage(image, imageBuffers, fileNames, fileMimeTypes, fileSize) {
+  async createImage(
+    image,
+    imageBuffers,
+    fileNames,
+    fileMimeTypes,
+    fileSize,
+    path: string,
+  ) {
     const imageObjects = image.map((image, index: number) => ({
       buffer: imageBuffers[index].buffer,
       originalname: fileNames[index].originalname,
@@ -14,7 +21,7 @@ export class ImageService {
     }));
 
     const uploadPromises = imageObjects.map(async (imageObject) => {
-      const key = `whisper_images/${Date.now()}_${imageObject.originalname}`;
+      const key = `images/${path}${Date.now()}_${imageObject.originalname}`;
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: key,
