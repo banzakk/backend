@@ -68,6 +68,8 @@ export class WhispersService {
       whisper.user = user;
       whisper.content = content;
 
+      const path: string = 'whisper_images';
+
       if (image && image.length > 0) {
         const imageUrl = await this.imageService.createImage(
           image,
@@ -75,6 +77,7 @@ export class WhispersService {
           fileNames,
           fileMimeTypes,
           fileSize,
+          path,
         );
         const imageUrlDto: CreateWhisperImageDto = { url: imageUrl };
         await this.whispersRepository.save(whisper);
@@ -89,8 +92,8 @@ export class WhispersService {
       const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
 
       if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
-        let hashTagIdArr: number[] | undefined;
-        hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
+        const hashTagIdArr: number[] | undefined =
+          await this.hashTagsService.createHashTag(hashTagArray);
 
         if (hashTagIdArr !== undefined) {
           await this.whisperHashTagService.createWhisperHashTag(
@@ -99,8 +102,7 @@ export class WhispersService {
           );
         }
       }
-      await queryRunner.commitTransaction();
-      return 'Whisper creation successful';
+      return await queryRunner.commitTransaction();
     } catch (err) {
       console.log(err);
       await queryRunner.rollbackTransaction();
