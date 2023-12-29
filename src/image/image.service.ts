@@ -21,7 +21,7 @@ export class ImageService {
     }));
 
     const uploadPromises = imageObjects.map(async (imageObject) => {
-      const key = `images/${path}${Date.now()}_${imageObject.originalname}`;
+      const key = `images/${path}/${Date.now()}_${imageObject.originalname}`;
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: key,
