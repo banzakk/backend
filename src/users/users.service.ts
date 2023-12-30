@@ -1,14 +1,17 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
 import { FollowsService } from '@src/follows/follows.service';
 import { SocialsService } from '@src/socials/socials.service';
 import { UserProfileImage } from '@src/user-profile-images/entities/user-profile-image.entity';
+import { UserProfileImagesService } from '@src/user-profile-images/user-profile-images.service';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
 import { User } from '@src/users/entities/user.entity';
@@ -16,6 +19,7 @@ import * as bcrypt from 'bcrypt';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserData } from './types/users';
 @Injectable()
 export class UsersService {
@@ -23,6 +27,8 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(UserSocial)
     private userSocialRepository: Repository<UserSocial>,
+    @Inject(forwardRef(() => UserProfileImagesService))
+    private readonly userProfileImagesService: UserProfileImagesService,
     private readonly socialsService: SocialsService,
     private readonly userSocialsService: UserSocialsService,
     private readonly followsService: FollowsService,
@@ -96,6 +102,39 @@ export class UsersService {
       console.error(err);
       throw new InternalServerErrorException(
         '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async updateUserData(
+    files,
+    imageBuffers,
+    fileNames,
+    fileMimeTypes,
+    fileSize,
+    userUid,
+    updateUserDto,
+  ) {
+    try {
+      const user = await this.getUserByUid(userUid);
+      if (!user) throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      const { userCustomId } = updateUserDto;
+      const [imageUrl] =
+        await this.userProfileImagesService.createUserProfileImage(
+          files,
+          imageBuffers,
+          fileNames,
+          fileMimeTypes,
+          fileSize,
+        );
+      await this.updateUser({ ...updateUserDto, id: user.id });
+      await this.userProfileImagesService.saveUserProfileImageTransaction(
+        imageUrl,
+        userCustomId ? userCustomId : user.user_custom_id,
+      );
+    } catch (err) {
+      throw new InternalServerErrorException(
+        '유저 정보 업데이트에 실패했습니다.',
       );
     }
   }
@@ -233,6 +272,25 @@ export class UsersService {
           { user_profile_image: imageId },
         );
       }
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '유저 정보 업데이트에 실패했습니다.',
+      );
+    }
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto & { id: number }) {
+    try {
+      const { name, password, userCustomId, id } = updateUserDto;
+      await this.usersRepository.update(
+        { id },
+        {
+          name,
+          password,
+          user_custom_id: userCustomId,
+        },
+      );
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(

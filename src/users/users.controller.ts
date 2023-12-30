@@ -3,14 +3,18 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Request,
   Response,
   UnauthorizedException,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthService } from '@src/auth/auth.service';
 import { GoogleAuthGuard } from '@src/auth/guards/google-auth.guard';
 import { KakaoAuthGuard } from '@src/auth/guards/kakao-auth.guard';
@@ -18,8 +22,10 @@ import { LocalAuthGuard } from '@src/auth/guards/local-auth.guard';
 import { NaverAuthGuard } from '@src/auth/guards/naver-auth.guard';
 import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
+import { UserProfileImagesService } from '@src/user-profile-images/user-profile-images.service';
 import { allKeysExist } from '@src/utils';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyUserEmailDto, VerifyUserIdDto } from './dto/verify-user.dto';
 import { UsersService } from './users.service';
 
@@ -30,6 +36,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
     private configService: ConfigService,
+    private userProfileImagesService: UserProfileImagesService,
   ) {
     this.cookieOption = {
       httpOnly: true,
@@ -46,6 +53,30 @@ export class UsersController {
     return {
       userCustomId: userData.user_custom_id,
     };
+  }
+
+  @Patch('/profile')
+  @UseInterceptors(FilesInterceptor('image'))
+  async updateUserData(
+    @Request() req,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles() imageBuffers: Array<Express.Multer.File>,
+    @UploadedFiles() fileNames: Array<Express.Multer.File>,
+    @UploadedFiles() fileMimeTypes: Array<Express.Multer.File>,
+    @UploadedFiles() fileSize: Array<Express.Multer.File>,
+  ) {
+    const { userUid } = req.user;
+    await this.usersService.updateUserData(
+      files,
+      imageBuffers,
+      fileNames,
+      fileMimeTypes,
+      fileSize,
+      userUid,
+      updateUserDto,
+    );
+    return { message: '프로필 업데이트에 성공했습니다.' };
   }
 
   @Public()
