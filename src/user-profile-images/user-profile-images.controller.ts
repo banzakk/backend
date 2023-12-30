@@ -39,5 +39,6 @@ export class UserProfileImagesController {
       imageUrl,
       userCustomId,
     );
+    return { message: '이미지 업데이트에 성공했습니다.' };
   }
 }
