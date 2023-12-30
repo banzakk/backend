@@ -1,7 +1,9 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ImageService } from '@src/image/image.service';
@@ -15,7 +17,7 @@ export class UserProfileImagesService {
     private readonly imageService: ImageService,
     @InjectRepository(UserProfileImage)
     private userProfileImageRepository: Repository<UserProfileImage>,
-    private userService: UsersService,
+    @Inject(forwardRef(() => UsersService)) private userService: UsersService,
     private dataSource: DataSource,
   ) {}
   async saveUserProfileImageTransaction(url, userCustomId: string) {

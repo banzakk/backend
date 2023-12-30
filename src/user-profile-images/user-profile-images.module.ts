@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageModule } from '@src/image/image.module';
 import { UsersModule } from '@src/users/users.module';
@@ -10,9 +10,10 @@ import { UserProfileImagesService } from './user-profile-images.service';
   imports: [
     TypeOrmModule.forFeature([UserProfileImage]),
     ImageModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [UserProfileImagesController],
   providers: [UserProfileImagesService],
+  exports: [UserProfileImagesService],
 })
 export class UserProfileImagesModule {}
