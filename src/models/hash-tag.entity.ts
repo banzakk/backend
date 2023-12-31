@@ -1,5 +1,6 @@
+import { UserHashTag } from '@src/user-hash-tags/entities/user-hash-tag.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { UserHashTag, WhisperHashTag } from '.';
+import { WhisperHashTag } from '.';
 
 @Entity('hash_tags')
 export class HashTag {

@@ -1,5 +1,7 @@
 import { HashTagStatus } from '@src/hash-tag-status/entities/hash-tag-status.entity';
-import { UserHashTag, WhisperHashTag } from '@src/models';
+import { WhisperHashTag } from '@src/models';
+import { UserHashTag } from '@src/user-hash-tags/entities/user-hash-tag.entity';
+
 import {
   Column,
   Entity,
@@ -21,7 +23,7 @@ export class HashTags {
   @JoinColumn({ name: 'hash_tag_status_id' })
   hash_tag_status: HashTagStatus;
 
-@OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.hash_tag)
+  @OneToMany(() => WhisperHashTag, (whisperHashTag) => whisperHashTag.hash_tag)
   whisper_hash_tags: WhisperHashTag[];
 
   @OneToMany(() => UserHashTag, (userHashTag) => userHashTag.hash_tag)

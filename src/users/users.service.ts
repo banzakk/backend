@@ -1,12 +1,17 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthType } from '@src/auth/types/auth-type';
-import { UserHashTag } from '@src/models';
+import { FollowsService } from '@src/follows/follows.service';
 import { SocialsService } from '@src/socials/socials.service';
+import { UserProfileImage } from '@src/user-profile-images/entities/user-profile-image.entity';
+import { UserProfileImagesService } from '@src/user-profile-images/user-profile-images.service';
 import { UserSocial } from '@src/user-socials/entities/user-social.entity';
 import { UserSocialsService } from '@src/user-socials/user-socials.service';
 import { User } from '@src/users/entities/user.entity';
@@ -14,29 +19,29 @@ import * as bcrypt from 'bcrypt';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import * as uuid from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserData } from './types/users';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(UserHashTag)
-    private userHashTagRepository: Repository<UserHashTag>,
     @InjectRepository(UserSocial)
     private userSocialRepository: Repository<UserSocial>,
+    @Inject(forwardRef(() => UserProfileImagesService))
+    private readonly userProfileImagesService: UserProfileImagesService,
     private readonly socialsService: SocialsService,
     private readonly userSocialsService: UserSocialsService,
+    private readonly followsService: FollowsService,
     private dataSource: DataSource,
   ) {}
 
   async signup(createUserDto: CreateUserDto) {
-    const { email, hashTags } = createUserDto;
+    const { email } = createUserDto;
     const userExist = await this.isEmailExist(email);
     if (userExist) {
       throw new BadRequestException('해당 email로는 가입할 수 없습니다.');
     }
-    await this.createUser(createUserDto);
-    const user = await this.getUserByEmail(email);
-    if (user && user.id && hashTags && hashTags.length > 0)
-      await this.addUserHashTag(user.id, hashTags);
+    return await this.createUser(createUserDto);
   }
 
   async socialSignUpTransaction(email: string, name: string, type: AuthType) {
@@ -62,6 +67,74 @@ export class UsersService {
     }
   }
 
+  async getUserData(
+    email: string,
+    userId: number,
+    myId?: number,
+  ): Promise<UserData> {
+    try {
+      const user = await this.getUserProfileByEmail(email);
+      const followings =
+        await this.followsService.getFollowingsByUserId(userId);
+      const followers = await this.followsService.getFollowersByUserId(userId);
+      if (!user) throw new NotFoundException();
+
+      let result = {
+        user,
+        followingCount: followings.length,
+        followerCount: followers.length,
+      };
+
+      if (myId) {
+        const myFollowings =
+          await this.followsService.getFollowingsByUserId(myId);
+        const isFollowingUser = Boolean(
+          myFollowings.find((data) => data.userId === userId),
+        );
+        result = Object.assign(result, { isFollowingUser });
+      }
+      return result;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async updateUserData(
+    files,
+    imageBuffers,
+    fileNames,
+    fileMimeTypes,
+    fileSize,
+    userUid,
+    updateUserDto,
+  ) {
+    try {
+      const user = await this.getUserByUid(userUid);
+      if (!user) throw new NotFoundException('사용자를 찾을 수 없습니다.');
+      const { userCustomId } = updateUserDto;
+      const [imageUrl] =
+        await this.userProfileImagesService.createUserProfileImage(
+          files,
+          imageBuffers,
+          fileNames,
+          fileMimeTypes,
+          fileSize,
+        );
+      await this.updateUser({ ...updateUserDto, id: user.id });
+      await this.userProfileImagesService.saveUserProfileImageTransaction(
+        imageUrl,
+        userCustomId ? userCustomId : user.user_custom_id,
+      );
+    } catch (err) {
+      throw new InternalServerErrorException(
+        '유저 정보 업데이트에 실패했습니다.',
+      );
+    }
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
@@ -76,15 +149,38 @@ export class UsersService {
     }
   }
 
-  async getUserByCustomId(userCustomId: string): Promise<string> {
+  async getUserProfileByEmail(email: string) {
+    try {
+      const user = await this.usersRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.user_profile_image', 'userProfileImage')
+        .where('user.email = :email', { email })
+        .getOne()
+        .then((user) => {
+          const result = {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            userCustomId: user.user_custom_id,
+            userProfileImageUrl: user.user_profile_image?.url,
+          };
+          return result;
+        });
+      return user;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async getUserByCustomId(userCustomId: string): Promise<User> {
     try {
       const user = await this.usersRepository.findOne({
         where: { user_custom_id: userCustomId },
       });
-      if (user) {
-        return user.user_custom_id;
-      }
-      return '';
+      return user;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
@@ -116,7 +212,8 @@ export class UsersService {
       user.user_custom_id = userCustomId;
       user.password = hash;
       user.uid = uuid.v4();
-      await this.usersRepository.save(user);
+      const result = await this.usersRepository.save(user);
+      return result;
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
@@ -179,18 +276,47 @@ export class UsersService {
       });
   }
 
-  private async addUserHashTag(userId: number, hashTags: any) {
+  async updateUserProfileImageId(
+    id: number,
+    imageId: UserProfileImage,
+    queryRunner?: QueryRunner,
+  ) {
     try {
-      const hashes = hashTags.map((data) => ({
-        user: userId,
-        hash_tag: data,
-      }));
-      const userHashTags = await this.userHashTagRepository.create(hashes);
-      await this.userHashTagRepository.save(userHashTags);
+      if (queryRunner) {
+        await queryRunner.manager.update(
+          User,
+          { id },
+          { user_profile_image: imageId },
+        );
+      } else {
+        await this.usersRepository.update(
+          { id },
+          { user_profile_image: imageId },
+        );
+      }
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
-        '해시태그 추가 중 오류가 발생했습니다.',
+        '유저 정보 업데이트에 실패했습니다.',
+      );
+    }
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto & { id: number }) {
+    try {
+      const { name, password, userCustomId, id } = updateUserDto;
+      await this.usersRepository.update(
+        { id },
+        {
+          name,
+          password,
+          user_custom_id: userCustomId,
+        },
+      );
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '유저 정보 업데이트에 실패했습니다.',
       );
     }
   }
