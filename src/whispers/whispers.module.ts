@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HashTagStatus } from '@src/hash-tag-status/entities/hash-tag-status.entity';
+import { HashTags } from '@src/hash-tags/entities/hash-tag.entity';
 import { HashTagsModule } from '@src/hash-tags/hash-tags.module';
 import { ImageModule } from '@src/image/image.module';
 import { WhisperHashTagModule } from '@src/whisper-hash-tag/whisper-hash-tag.module';
@@ -12,7 +13,7 @@ import { WhispersService } from './whispers.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Whisper, WhisperImage, HashTagStatus]),
+    TypeOrmModule.forFeature([Whisper, WhisperImage, HashTags, HashTagStatus]),
     WhisperImagesModule,
     HashTagsModule,
     WhisperHashTagModule,
