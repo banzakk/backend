@@ -7,10 +7,11 @@ export type FollowUserData = {
 
 export type UserData = {
   user: {
-    id: number;
+    userId: number;
     name: string;
     email: string;
     userCustomId: string;
+    userProfileImageUrl: string;
   };
   followingCount: number;
   followerCount: number;

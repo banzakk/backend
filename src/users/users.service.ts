@@ -73,18 +73,14 @@ export class UsersService {
     myId?: number,
   ): Promise<UserData> {
     try {
-      const user = await this.getUserByEmail(email);
+      const user = await this.getUserProfileByEmail(email);
       const followings =
         await this.followsService.getFollowingsByUserId(userId);
       const followers = await this.followsService.getFollowersByUserId(userId);
       if (!user) throw new NotFoundException();
+
       let result = {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          userCustomId: user.user_custom_id,
-        },
+        user,
         followingCount: followings.length,
         followerCount: followers.length,
       };
@@ -144,6 +140,32 @@ export class UsersService {
       const user = await this.usersRepository.findOne({
         where: { email },
       });
+      return user;
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '사용자 조회 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  async getUserProfileByEmail(email: string) {
+    try {
+      const user = await this.usersRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.user_profile_image', 'userProfileImage')
+        .where('user.email = :email', { email })
+        .getOne()
+        .then((user) => {
+          const result = {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            userCustomId: user.user_custom_id,
+            userProfileImageUrl: user.user_profile_image?.url,
+          };
+          return result;
+        });
       return user;
     } catch (err) {
       console.error(err);
