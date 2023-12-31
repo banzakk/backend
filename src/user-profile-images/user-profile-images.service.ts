@@ -48,11 +48,11 @@ export class UserProfileImagesService {
   }
 
   async createUserProfileImage(
-    files: Array<Express.Multer.File>,
-    imageBuffers: Array<Express.Multer.File>,
-    fileNames: Array<Express.Multer.File>,
-    fileMimeTypes: Array<Express.Multer.File>,
-    fileSize: Array<Express.Multer.File>,
+    files,
+    imageBuffers,
+    fileNames,
+    fileMimeTypes,
+    fileSize,
   ) {
     try {
       const imageUrl = await this.imageService.createImage(

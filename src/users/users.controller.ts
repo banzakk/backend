@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -22,7 +23,6 @@ import { LocalAuthGuard } from '@src/auth/guards/local-auth.guard';
 import { NaverAuthGuard } from '@src/auth/guards/naver-auth.guard';
 import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
-import { UserProfileImagesService } from '@src/user-profile-images/user-profile-images.service';
 import { allKeysExist } from '@src/utils';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -36,7 +36,6 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
     private configService: ConfigService,
-    private userProfileImagesService: UserProfileImagesService,
   ) {
     this.cookieOption = {
       httpOnly: true,
@@ -59,24 +58,30 @@ export class UsersController {
   @UseInterceptors(FilesInterceptor('image'))
   async updateUserData(
     @Request() req,
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @UploadedFiles() imageBuffers: Array<Express.Multer.File>,
-    @UploadedFiles() fileNames: Array<Express.Multer.File>,
-    @UploadedFiles() fileMimeTypes: Array<Express.Multer.File>,
-    @UploadedFiles() fileSize: Array<Express.Multer.File>,
+    @UploadedFiles() image,
+    @UploadedFiles() imageBuffers,
+    @UploadedFiles() fileNames,
+    @UploadedFiles() fileMimeTypes,
+    @UploadedFiles() fileSize,
   ) {
-    const { userUid } = req.user;
-    await this.usersService.updateUserData(
-      files,
-      imageBuffers,
-      fileNames,
-      fileMimeTypes,
-      fileSize,
-      userUid,
-      updateUserDto,
-    );
-    return { message: '프로필 업데이트에 성공했습니다.' };
+    try {
+      if (image.length === 0)
+        throw new BadRequestException('이미지가 없습니다.');
+      const { userUid } = req.user;
+      const updateUserDto: UpdateUserDto = req.body;
+      await this.usersService.updateUserData(
+        image,
+        imageBuffers,
+        fileNames,
+        fileMimeTypes,
+        fileSize,
+        userUid,
+        updateUserDto,
+      );
+      return { message: '프로필 업데이트에 성공했습니다.' };
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   @Public()

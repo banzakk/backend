@@ -1,13 +1,13 @@
 import {
-  Body,
+  BadRequestException,
   Controller,
   Post,
+  Request,
   UploadedFiles,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { CreateUserProfileImageDto } from './dto/create-user-profile-image.dto';
+import { Public } from '@src/decorators/public.decorator';
 import { UserProfileImagesService } from './user-profile-images.service';
 
 @Controller('/users/profile-image')
@@ -16,29 +16,37 @@ export class UserProfileImagesController {
     private readonly userProfileImagesService: UserProfileImagesService,
   ) {}
 
+  @Public()
   @Post()
   @UseInterceptors(FilesInterceptor('image'))
   async create(
-    @Body(ValidationPipe) createUserProfileImageDto: CreateUserProfileImageDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @UploadedFiles() imageBuffers: Array<Express.Multer.File>,
-    @UploadedFiles() fileNames: Array<Express.Multer.File>,
-    @UploadedFiles() fileMimeTypes: Array<Express.Multer.File>,
-    @UploadedFiles() fileSize: Array<Express.Multer.File>,
+    @Request() req,
+    @UploadedFiles() image,
+    @UploadedFiles() imageBuffers,
+    @UploadedFiles() fileNames,
+    @UploadedFiles() fileMimeTypes,
+    @UploadedFiles() fileSize,
   ) {
-    const { userCustomId } = createUserProfileImageDto;
-    const [imageUrl] =
-      await this.userProfileImagesService.createUserProfileImage(
-        files,
-        imageBuffers,
-        fileNames,
-        fileMimeTypes,
-        fileSize,
+    try {
+      if (image.length === 0)
+        throw new BadRequestException('이미지가 없습니다.');
+      const { userCustomId } = req.body;
+      const [imageUrl] =
+        await this.userProfileImagesService.createUserProfileImage(
+          image,
+          imageBuffers,
+          fileNames,
+          fileMimeTypes,
+          fileSize,
+        );
+      await this.userProfileImagesService.saveUserProfileImageTransaction(
+        imageUrl,
+        userCustomId,
       );
-    await this.userProfileImagesService.saveUserProfileImageTransaction(
-      imageUrl,
-      userCustomId,
-    );
-    return { message: '이미지 업데이트에 성공했습니다.' };
+
+      return { message: '이미지 업데이트에 성공했습니다.' };
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
