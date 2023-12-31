@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Request,
   UploadedFiles,
@@ -34,6 +36,19 @@ export class WhispersController {
       fileNames,
       fileMimeTypes,
       fileSize,
+    );
+  }
+
+  @Get()
+  findAll() {}
+
+  @Get(':id')
+  async findOne(@Param('id') id: number, @Request() req) {
+    const isUserTimeLine: boolean = true;
+    return await this.whispersService.viewTimeLine(
+      req.user.userId,
+      id,
+      isUserTimeLine,
     );
   }
 }
