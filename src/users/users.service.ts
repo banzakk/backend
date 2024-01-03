@@ -62,6 +62,7 @@ export class UsersService {
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('회원가입에 실패했습니다.');
     } finally {
       await queryRunner.release();
     }

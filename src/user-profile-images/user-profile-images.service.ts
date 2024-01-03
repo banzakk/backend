@@ -42,6 +42,7 @@ export class UserProfileImagesService {
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('이미지 저장에 실패했습니다.');
     } finally {
       await queryRunner.release();
     }
