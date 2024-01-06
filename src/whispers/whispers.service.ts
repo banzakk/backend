@@ -87,6 +87,7 @@ export class WhispersService {
         )
         .where('users.id = :id', { id: userId })
         .groupBy('whispers.id')
+        .orderBy('entity.createdAt', 'DESC')
         .setParameter('accessUserId', accessUserId)
         .getRawMany();
 
