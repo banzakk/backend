@@ -305,11 +305,12 @@ export class UsersService {
   async updateUser(updateUserDto: UpdateUserDto & { id: number }) {
     try {
       const { name, password, userCustomId, id } = updateUserDto;
+      const hash = await bcrypt.hash(password, 12);
       await this.usersRepository.update(
         { id },
         {
           name,
-          password,
+          password: hash,
           user_custom_id: userCustomId,
         },
       );
