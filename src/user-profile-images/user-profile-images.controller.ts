@@ -1,13 +1,15 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Post,
-  Request,
   UploadedFiles,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from '@src/decorators/public.decorator';
+import { CreateUserProfileImageDto } from './dto/create-user-profile-image.dto';
 import { UserProfileImagesService } from './user-profile-images.service';
 
 @Controller('/users/profile-image')
@@ -20,7 +22,8 @@ export class UserProfileImagesController {
   @Post()
   @UseInterceptors(FilesInterceptor('image'))
   async create(
-    @Request() req,
+    @Body(ValidationPipe)
+    createUserProfileImageDto: CreateUserProfileImageDto,
     @UploadedFiles() image,
     @UploadedFiles() imageBuffers,
     @UploadedFiles() fileNames,
@@ -30,7 +33,7 @@ export class UserProfileImagesController {
     try {
       if (image.length === 0)
         throw new BadRequestException('이미지가 없습니다.');
-      const { userCustomId } = req.body;
+      const { userCustomId } = createUserProfileImageDto;
       const [imageUrl] =
         await this.userProfileImagesService.createUserProfileImage(
           image,
