@@ -82,10 +82,6 @@ export class WhispersService {
         const imageUrlDto: CreateWhisperImageDto = { url: imageUrl };
         await this.whispersRepository.save(whisper);
         await this.whisperImagesService.createImage(whisper.id, imageUrlDto);
-
-        return {
-          message: 'Whisper creation successful',
-        };
       }
       await this.whispersRepository.save(whisper);
 
@@ -102,7 +98,10 @@ export class WhispersService {
           );
         }
       }
-      return await queryRunner.commitTransaction();
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Whisper creation successful',
+      };
     } catch (err) {
       console.log(err);
       await queryRunner.rollbackTransaction();
