@@ -30,7 +30,7 @@ export class WhisperImagesService {
       whisperImage.url = imageUrl;
       whisperImage.whisper = whisper;
       await this.whisperImagesRepository.save(whisperImage);
-      return 'Whisper image creation successful';
     }
+    return 'Whisper image creation successful';
   }
 }
