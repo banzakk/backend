@@ -10,6 +10,7 @@ import { User } from '@src/users/entities/user.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
+import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { S3 } from 'aws-sdk';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
@@ -64,9 +65,16 @@ export class WhispersService {
       const user = await this.whispersRepository.manager.findOne(User, {
         where: { id: userId },
       });
+      const whisperStatus = await this.whispersRepository.manager.findOne(
+        WhisperStatus,
+        {
+          where: { id: 2 },
+        },
+      );
       const whisper = new Whisper();
       whisper.user = user;
       whisper.content = content;
+      whisper.whisper_status = whisperStatus;
 
       const path: string = 'whisper_images';
 
