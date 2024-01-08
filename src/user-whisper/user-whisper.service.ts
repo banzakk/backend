@@ -54,6 +54,7 @@ export class UserWhisperService {
         )
         .where('users.id = :id', { id: userId })
         .groupBy('whispers.id')
+        .orderBy('whispers.created_at', 'DESC')
         .setParameter('accessUserId', accessUserId)
         .getRawMany();
 
