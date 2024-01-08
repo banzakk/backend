@@ -58,6 +58,7 @@ export class UsersController {
   @UseInterceptors(FilesInterceptor('image'))
   async updateUserData(
     @Request() req,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
     @UploadedFiles() image,
     @UploadedFiles() imageBuffers,
     @UploadedFiles() fileNames,
@@ -68,7 +69,6 @@ export class UsersController {
       if (image.length === 0)
         throw new BadRequestException('이미지가 없습니다.');
       const { userUid } = req.user;
-      const updateUserDto: UpdateUserDto = req.body;
       await this.usersService.updateUserData(
         image,
         imageBuffers,
