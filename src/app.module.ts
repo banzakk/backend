@@ -10,9 +10,12 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { FollowsModule } from './follows/follows.module';
 import { RedisModule } from './redis.module';
 import { S3Module } from './s3.module';
+import { UserHashTagsModule } from './user-hash-tags/user-hash-tags.module';
 import { UsersModule } from './users/users.module';
 import { WhispersModule } from './whispers/whispers.module';
 import { UserWhisperModule } from './user-whisper/user-whisper.module';
+import { UserProfileImagesModule } from './user-profile-images/user-profile-images.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,7 +38,8 @@ import { UserWhisperModule } from './user-whisper/user-whisper.module';
     FollowsModule,
     WhispersModule,
     UserWhisperModule,
-
+    UserHashTagsModule,
+    UserProfileImagesModule,
   ],
   controllers: [AppController],
   providers: [

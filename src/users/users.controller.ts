@@ -1,15 +1,21 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  Param,
+  Patch,
   Post,
   Request,
   Response,
   UnauthorizedException,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthService } from '@src/auth/auth.service';
 import { GoogleAuthGuard } from '@src/auth/guards/google-auth.guard';
 import { KakaoAuthGuard } from '@src/auth/guards/kakao-auth.guard';
@@ -19,6 +25,7 @@ import { RefreshJwtGuard } from '@src/auth/guards/refresh-jwt-auth.guard';
 import { Public } from '@src/decorators/public.decorator';
 import { allKeysExist } from '@src/utils';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyUserEmailDto, VerifyUserIdDto } from './dto/verify-user.dto';
 import { UsersService } from './users.service';
 
@@ -41,8 +48,40 @@ export class UsersController {
   @Public()
   @Post('/signup')
   async create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    await this.usersService.signup(createUserDto);
-    return 'ok';
+    const userData = await this.usersService.signup(createUserDto);
+    return {
+      userCustomId: userData.user_custom_id,
+    };
+  }
+
+  @Patch('/profile')
+  @UseInterceptors(FilesInterceptor('image'))
+  async updateUserData(
+    @Request() req,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @UploadedFiles() image,
+    @UploadedFiles() imageBuffers,
+    @UploadedFiles() fileNames,
+    @UploadedFiles() fileMimeTypes,
+    @UploadedFiles() fileSize,
+  ) {
+    try {
+      if (image.length === 0)
+        throw new BadRequestException('이미지가 없습니다.');
+      const { userUid } = req.user;
+      await this.usersService.updateUserData(
+        image,
+        imageBuffers,
+        fileNames,
+        fileMimeTypes,
+        fileSize,
+        userUid,
+        updateUserDto,
+      );
+      return { message: '프로필 업데이트에 성공했습니다.' };
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   @Public()
@@ -147,6 +186,21 @@ export class UsersController {
   @UseGuards(KakaoAuthGuard)
   async kakaoCallback(@Request() req, @Response({ passthrough: true }) res) {
     return this.handleCallback(req, res);
+  }
+
+  @Get('/user')
+  async getMyData(@Request() req) {
+    const { email, userId } = req.user;
+    return await this.usersService.getUserData(email, userId);
+  }
+
+  @Get('/:userCustomId')
+  async getUserData(@Request() req, @Param() param) {
+    const { userCustomId } = param;
+
+    const { email, id } =
+      await this.usersService.getUserByCustomId(userCustomId);
+    return await this.usersService.getUserData(email, id, req.user.userId);
   }
 
   private async handleCallback(req, res) {

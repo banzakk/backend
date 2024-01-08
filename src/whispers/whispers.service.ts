@@ -86,8 +86,8 @@ export class WhispersService {
       const hashTagArray = Array.isArray(hashTag) ? hashTag : [hashTag];
 
       if (hashTag !== undefined && (hashTag || hashTagArray.length > 0)) {
-        let hashTagIdArr: number[] | undefined;
-        hashTagIdArr = await this.hashTagsService.createHashTag(hashTagArray);
+        const hashTagIdArr: number[] | undefined =
+          await this.hashTagsService.createHashTag(hashTagArray);
 
         if (hashTagIdArr !== undefined) {
           await this.whisperHashTagService.createWhisperHashTag(
@@ -96,8 +96,7 @@ export class WhispersService {
           );
         }
       }
-      await queryRunner.commitTransaction();
-      return 'Whisper creation successful';
+      return await queryRunner.commitTransaction();
     } catch (err) {
       console.log(err);
       await queryRunner.rollbackTransaction();
