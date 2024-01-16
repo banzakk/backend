@@ -1,73 +1,74 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 반짝
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+    반려동물과 함께하는 사람들을 위한 일상, 정보 공유 커뮤니티 서비스
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# 프로젝트 정보
 
-## Description
+## 제작 기간
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+    2023.12 ~ 진행중
 
-## Installation
+## 구성 인원
 
-```bash
-$ yarn install
-```
+| 이름   | 역할    | 기능   |
+| ------ | ------- | ------ |
+| 고은채 | Backend | 위스퍼 |
+| 이현진 | Backend | 유저   |
 
-## Running the app
+# 적용 기술 및 구현 기능
 
-```bash
-# development
-$ yarn run start
+## 적용 기술
 
-# watch mode
-$ yarn run start:dev
+- FE: Next.js, ReactQuery, shadcn/ui(+tailwind css), SCSS module, TypeScript
+- BE: Nest.js, TypeORM, TypeScript, MySQL, AWS, S3, CI/CD(예정)
 
-# production mode
-$ yarn run start:prod
-```
+## 구현 기능
 
-## Test
+### User
 
-```bash
-# unit tests
-$ yarn run test
+- 다른 반려인을 팔로잉하여 나만의 타임라인을 만들 수 있습니다.
+- 사용자는 로컬 또는 소셜 계정으로 가입하여 서비스를 이용할 수 있습니다.
 
-# e2e tests
-$ yarn run test:e2e
+### Whisper
 
-# test coverage
-$ yarn run test:cov
-```
+- 반려동물과 함께하는 일상을 자유롭게 기록하고 반려인들과 공유할 수 있습니다.
+- 위스퍼 작성 시 컨텐츠와 관련된 키워드를 생성하고 추가할 수 있습니다.
 
-## Support
+### Community
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- 커뮤니티를 통해 유용한 팁과 자신만의 노하우를 공유할 수 있습니다.
 
-## Stay in touch
+### Market
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- 다른 반려인과 반려동물 용품을 거래할 수 있습니다.
+- 더 이상 필요하지 않은 반려동물 용품을 나눔 또는 거래 할 수 있습니다.
 
-## License
+### Notification
 
-Nest is [MIT licensed](LICENSE).
+- 다른 반려인과의 상호작용을 실시간으로 알림을 받을 수 있습니다.
+
+### HashTag
+
+- 회원가입 시 동일한 해시태그를 선택한 다른 반려인들을 추천받을 수 있습니다.
+- 특정 해시태그를 통해 해당 해시태그와 관련된 위스퍼를 조회할 수 있습니다.
+
+### Setting
+
+- 관심 있는 다른 반려인의 주제나 활동에 대한 업데이트를 우선적으로 보거나, 원하지 않는 콘텐츠를 필터링할 수 있습니다.
+
+### Message
+
+- 서로 팔로우중인 반려인과 1:1 메시지를 주고 받을 수 있습니다.
+
+### Walking Party
+
+- 산책 이벤트를 생성해 함께 산책할 근교의 다른 반려인을 모집할 수 있습니다.
+- 같은 동네의 반려인들과 함께 산책하는 오프라인 모임을 만들 수 있습니다.
+
+# ERD
+
+<img src="./Banzzak.png" alt="다이어그램">
+
+# 기획서
+
+<a href="https://fern-shape-a88.notion.site/ab6df8de8df74e508a3ac724ad513d9c">기획서 바로가기</a>
