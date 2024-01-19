@@ -6,6 +6,7 @@ import { User } from '@src/users/entities/user.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
+import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { Whisper } from './entities/whisper.entity';
@@ -58,9 +59,16 @@ export class WhispersService {
       const user = await this.whispersRepository.manager.findOne(User, {
         where: { id: userId },
       });
+      const whisperStatus = await this.whispersRepository.manager.findOne(
+        WhisperStatus,
+        {
+          where: { id: 2 },
+        },
+      );
       const whisper = new Whisper();
       whisper.user = user;
       whisper.content = content;
+      whisper.whisper_status = whisperStatus;
 
       const path: string = 'whisper_images';
 
@@ -76,10 +84,6 @@ export class WhispersService {
         const imageUrlDto: CreateWhisperImageDto = { url: imageUrl };
         await this.whispersRepository.save(whisper);
         await this.whisperImagesService.createImage(whisper.id, imageUrlDto);
-
-        return {
-          message: 'Whisper creation successful',
-        };
       }
       await this.whispersRepository.save(whisper);
 
@@ -96,7 +100,10 @@ export class WhispersService {
           );
         }
       }
-      return await queryRunner.commitTransaction();
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Whisper creation successful',
+      };
     } catch (err) {
       console.log(err);
       await queryRunner.rollbackTransaction();
