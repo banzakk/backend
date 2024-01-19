@@ -16,8 +16,6 @@ export class WhisperHashTagService {
   ) {}
 
   async createWhisperHashTag(whisperId: number, hashTagId: number[]) {
-    console.log(whisperId, hashTagId);
-
     const whisperIdNumber = await this.whispersRepository.manager.findOne(
       Whisper,
       {

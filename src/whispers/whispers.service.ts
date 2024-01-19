@@ -1,8 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagsService } from '@src/hash-tags/hash-tags.service';
 import { ImageService } from '@src/image/image.service';
@@ -11,7 +7,6 @@ import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.se
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
 import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
-import { S3 } from 'aws-sdk';
 import { DataSource, Repository } from 'typeorm';
 import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { Whisper } from './entities/whisper.entity';
@@ -19,7 +14,6 @@ import { Whisper } from './entities/whisper.entity';
 @Injectable()
 export class WhispersService {
   constructor(
-    @Inject('S3_INSTANCE') private readonly s3: S3,
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,

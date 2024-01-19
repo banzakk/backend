@@ -1,7 +1,15 @@
 import { User } from '@src/users/entities/user.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { HashTag } from '.';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import { HashTag } from '../../models';
+
 @Entity('user_hash_tags')
+@Unique(['hash_tag', 'user'])
 export class UserHashTag {
   @PrimaryGeneratedColumn()
   id: number;
