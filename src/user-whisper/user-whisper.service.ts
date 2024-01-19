@@ -34,7 +34,7 @@ export class UserWhisperService {
           'users.name AS nickName',
           '(CASE WHEN COUNT(hash_tags.name) > 0 THEN JSON_ARRAYAGG(hash_tags.name) ELSE "[]" END) AS hashTag',
           '(CASE WHEN COUNT(whisper_images.url) > 0 THEN JSON_ARRAYAGG(whisper_images.url) ELSE "[]" END) AS imageUrl',
-          '(CASE WHEN users.id = :accessUserId THEN 1 ELSE 0 END) AS isMyPost',
+          '(CASE WHEN users.id = :accessUserId THEN 1 ELSE 0 END) AS isMyWhisper',
         ])
         .leftJoin(User, 'users', 'whispers.user_id = users.id')
         .leftJoin(
@@ -69,7 +69,7 @@ export class UserWhisperService {
           nickName: row.nickName,
           hashTag: JSON.parse(row.hashTag),
           imageUrl: JSON.parse(row.imageUrl),
-          isMyPost: row.isMyPost,
+          isMyWhisper: row.isMyWhisper,
         };
       });
 
