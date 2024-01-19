@@ -1,5 +1,6 @@
 import { User } from '@src/users/entities/user.entity';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
+import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,11 +8,10 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DeletedWhisper, Rewhisper, WhisperHashTag } from '../../models';
+import { Rewhisper, WhisperHashTag } from '../../models';
 import { Like } from '../../models/like.entity';
 
 @Entity('whispers')
@@ -28,9 +28,9 @@ export class Whisper {
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
-  @OneToOne(() => DeletedWhisper)
-  @JoinColumn({ name: 'deleted_whisper_id' })
-  deleted_whisper: DeletedWhisper;
+  @ManyToOne(() => WhisperStatus)
+  @JoinColumn({ name: 'whisper_status_id' })
+  whisper_status: WhisperStatus;
 
   @ManyToOne(() => User, (user) => user.whispers, { nullable: false })
   @JoinColumn({ name: 'user_id' })

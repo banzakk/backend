@@ -69,6 +69,10 @@
 
 <img src="./Banzzak.png" alt="다이어그램">
 
+# API 문서
+
+[PostMan DOCS](https://documenter.getpostman.com/view/28839133/2s9YsT4nSW)
+
 # 기획서
 
 <a href="https://fern-shape-a88.notion.site/ab6df8de8df74e508a3ac724ad513d9c">기획서 바로가기</a>
