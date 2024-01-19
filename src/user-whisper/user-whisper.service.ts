@@ -53,6 +53,9 @@ export class UserWhisperService {
           'whispers.id = whisper_images.whisper_id',
         )
         .where('users.id = :id', { id: userId })
+        .andWhere('whispers.whisper_status_id = :whisperStatusId', {
+          whisperStatusId: 2,
+        })
         .groupBy('whispers.id')
         .orderBy('whispers.created_at', 'DESC')
         .setParameter('accessUserId', accessUserId)
