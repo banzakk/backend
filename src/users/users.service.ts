@@ -305,15 +305,25 @@ export class UsersService {
   async updateUser(updateUserDto: UpdateUserDto & { id: number }) {
     try {
       const { name, password, userCustomId, id } = updateUserDto;
-      const hash = await bcrypt.hash(password, 12);
-      await this.usersRepository.update(
-        { id },
-        {
-          name,
-          password: hash,
-          user_custom_id: userCustomId,
-        },
-      );
+      if (password) {
+        const hash = await bcrypt.hash(password, 12);
+        await this.usersRepository.update(
+          { id },
+          {
+            name,
+            password: hash,
+            user_custom_id: userCustomId,
+          },
+        );
+      } else {
+        await this.usersRepository.update(
+          { id },
+          {
+            name,
+            user_custom_id: userCustomId,
+          },
+        );
+      }
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
