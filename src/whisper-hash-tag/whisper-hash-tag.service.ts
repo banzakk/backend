@@ -15,7 +15,10 @@ export class WhisperHashTagService {
     private hashTagsRepository: Repository<HashTags>,
   ) {}
 
-  async createWhisperHashTag(whisperId: number, hashTagId: number[]) {
+  async createWhisperHashTag(
+    whisperId: number,
+    hashTagId: number[],
+  ): Promise<string> {
     try {
       const whisper = await this.whispersRepository.findOne({
         where: { id: whisperId },
@@ -51,5 +54,12 @@ export class WhisperHashTagService {
         `위스퍼 해시태그 생성에 실패하였습니다.`,
       );
     }
+  }
+
+  async findDuplicateHashTags(hashTag: string[]) {
+    const [hashtags] = hashTag;
+    await this.hashTagsRepository.findOne({
+      where: { name: hashtags },
+    });
   }
 }
