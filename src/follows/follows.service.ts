@@ -125,7 +125,7 @@ export class FollowsService {
     try {
       return (
         await this.followsRepository
-          .createQueryBuilder('test')
+          .createQueryBuilder('follow')
           .select('follows.following_user_id')
           .leftJoin(
             Follow,
