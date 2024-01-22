@@ -1,5 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Follow } from '@src/follows/entities/follow.entity';
+import { FollowsService } from '@src/follows/follows.service';
 import { HashTags } from '@src/hash-tags/entities/hash-tag.entity';
 import { User } from '@src/users/entities/user.entity';
 import { WhisperHashTag } from '@src/whisper-hash-tag/entities/whisper-hash-tag.entity';
@@ -11,21 +13,65 @@ import { Repository } from 'typeorm';
 export class UserWhisperService {
   constructor(
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
+    @InjectRepository(Follow) private followsRepository: Repository<Follow>,
+    private readonly followsService: FollowsService,
   ) {}
 
   async viewTimeLine(
     accessUserId: number,
     userId: number,
     isUserTimeLine: boolean,
+    pageNumber: number,
+    limitNumber: number,
   ) {
-    return isUserTimeLine
-      ? await this.viewUserTimeLine(accessUserId, userId)
-      : await this.viewMyTimeLine();
+    const result = await this.viewUserTimeLine(accessUserId, userId);
+    const startPosition = (pageNumber - 1) * limitNumber;
+    let resultQuery;
+
+    if (isUserTimeLine) {
+      resultQuery = await result
+        .offset(startPosition)
+        .limit(limitNumber)
+        .getRawMany();
+    } else {
+      const findFollowingUser =
+        await this.followsService.findFollowingUserId(accessUserId);
+      findFollowingUser.push(accessUserId);
+
+      resultQuery = await result
+        .leftJoin(
+          Follow,
+          'follows',
+          'follows.following_user_id IN (:...findFollowingUser)',
+          { findFollowingUser },
+        )
+        .where('users.id = :id OR users.id IN (:...findFollowingUser)', {
+          id: userId,
+          findFollowingUser,
+        })
+        .offset(startPosition)
+        .limit(limitNumber)
+        .getRawMany();
+    }
+
+    const parsedResult = resultQuery.map((row) => {
+      return {
+        whisperId: row.whisperId,
+        content: row.content,
+        userId: row.userId,
+        nickName: row.nickName,
+        hashTag: JSON.parse(row.hashTag),
+        imageUrl: JSON.parse(row.imageUrl),
+        isMyWhisper: row.isMyWhisper,
+      };
+    });
+
+    return await Promise.all(parsedResult);
   }
 
   private async viewUserTimeLine(accessUserId: number, userId: number) {
     try {
-      const result = await this.whispersRepository
+      return await this.whispersRepository
         .createQueryBuilder('whispers')
         .select([
           'whispers.id AS whisperId',
@@ -53,42 +99,13 @@ export class UserWhisperService {
           'whispers.id = whisper_images.whisper_id',
         )
         .where('users.id = :id', { id: userId })
-        .andWhere('whispers.whisper_status_id = :whisperStatusId', {
-          whisperStatusId: 2,
-        })
         .groupBy('whispers.id')
         .orderBy('whispers.created_at', 'DESC')
-        .setParameter('accessUserId', accessUserId)
-        .getRawMany();
-
-      const parsedResult = result.map((row) => {
-        return {
-          whisperId: row.whisperId,
-          content: row.content,
-          userId: row.userId,
-          nickName: row.nickName,
-          hashTag: JSON.parse(row.hashTag),
-          imageUrl: JSON.parse(row.imageUrl),
-          isMyWhisper: row.isMyWhisper,
-        };
-      });
-
-      return parsedResult;
+        .setParameter('accessUserId', accessUserId);
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
         '유저 타임라인 조회에 실패하였습니다.',
-      );
-    }
-  }
-
-  private async viewMyTimeLine() {
-    try {
-      return console.log('내 타임라인 조회');
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException(
-        '내 타임라인 조회에 실패하였습니다.',
       );
     }
   }
