@@ -25,15 +25,16 @@ export class UserWhisperService {
     limitNumber: number,
   ) {
     try {
-      const result = await this.viewUserTimeLine(accessUserId, userId);
-      const startPosition = (pageNumber - 1) * limitNumber;
+      const result = await this.viewUserTimeLine(
+        accessUserId,
+        userId,
+        pageNumber,
+        limitNumber,
+      );
       let resultQuery;
 
       if (isUserTimeLine) {
-        resultQuery = await result
-          .offset(startPosition)
-          .limit(limitNumber)
-          .getRawMany();
+        resultQuery = await result.getRawMany();
       } else {
         const findFollowingUser =
           await this.followsService.findFollowingUserId(accessUserId);
@@ -50,8 +51,6 @@ export class UserWhisperService {
             id: userId,
             findFollowingUser,
           })
-          .offset(startPosition)
-          .limit(limitNumber)
           .getRawMany();
       }
 
@@ -73,8 +72,15 @@ export class UserWhisperService {
     }
   }
 
-  private async viewUserTimeLine(accessUserId: number, userId: number) {
+  private async viewUserTimeLine(
+    accessUserId: number,
+    userId: number,
+    pageNumber: number,
+    limitNumber: number,
+  ) {
     try {
+      const startPosition = (pageNumber - 1) * limitNumber;
+
       return await this.whispersRepository
         .createQueryBuilder('whispers')
         .select([
@@ -103,8 +109,13 @@ export class UserWhisperService {
           'whispers.id = whisper_images.whisper_id',
         )
         .where('users.id = :id', { id: userId })
+        .andWhere('whispers.whisper_status_id = :notDeletedSatusId', {
+          notDeletedSatusId: 2,
+        })
         .groupBy('whispers.id')
         .orderBy('whispers.created_at', 'DESC')
+        .offset(startPosition)
+        .limit(limitNumber)
         .setParameter('accessUserId', accessUserId);
     } catch (err) {
       console.error(err);
