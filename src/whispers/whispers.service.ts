@@ -100,28 +100,35 @@ export class WhispersService {
     await queryRunner.startTransaction();
 
     try {
-      const foundWhisperStatus = await this.whisperStatusRepository.findOne({
-        where: { id: 1 },
-      });
+      const [whisperStatus] = await this.whispersRepository
+        .createQueryBuilder('whispers')
+        .select('whispers.whisper_status_id')
+        .where('whispers.id = :id', { id: whisperId })
+        .andWhere('whispers.user_id = :userId', { userId })
+        .getRawMany();
 
-      if (foundWhisperStatus.id !== 1) {
+      if (whisperStatus.whisper_status_id === 2) {
+        const foundDeleteWhisperStatus =
+          await this.whisperStatusRepository.findOne({
+            where: { id: 1 },
+          });
+
         await this.whispersRepository
           .createQueryBuilder('whispers')
           .where('whispers.id = :id', { id: whisperId })
           .andWhere('whispers.user_id = :userId', { userId })
-          .update({ whisper_status: foundWhisperStatus })
+          .update({ whisper_status: foundDeleteWhisperStatus })
           .execute();
 
         await queryRunner.commitTransaction();
         return { message: '위스퍼 삭제를 성공하였습니다.' };
+      } else {
+        throw new InternalServerErrorException('이미 삭제된 위스퍼 입니다.');
       }
-      throw new InternalServerErrorException('이미 삭제된 위스퍼입니다.');
     } catch (err) {
       console.error(err);
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(
-        '이미 삭제되었거나, 위스퍼 삭제 중 실패하였습니다.',
-      );
+      throw new InternalServerErrorException('위스퍼 삭제 중 실패하였습니다.');
     } finally {
       await queryRunner.release();
     }
