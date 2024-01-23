@@ -24,53 +24,63 @@ export class UserWhisperService {
     pageNumber: number,
     limitNumber: number,
   ) {
-    const result = await this.viewUserTimeLine(accessUserId, userId);
-    const startPosition = (pageNumber - 1) * limitNumber;
-    let resultQuery;
+    try {
+      const result = await this.viewUserTimeLine(
+        accessUserId,
+        userId,
+        pageNumber,
+        limitNumber,
+      );
+      let resultQuery;
 
-    if (isUserTimeLine) {
-      resultQuery = await result
-        .offset(startPosition)
-        .limit(limitNumber)
-        .getRawMany();
-    } else {
-      const findFollowingUser =
-        await this.followsService.findFollowingUserId(accessUserId);
-      findFollowingUser.push(accessUserId);
+      if (isUserTimeLine) {
+        resultQuery = await result.getRawMany();
+      } else {
+        const findFollowingUser =
+          await this.followsService.findFollowingUserId(accessUserId);
+        findFollowingUser.push(accessUserId);
 
-      resultQuery = await result
-        .leftJoin(
-          Follow,
-          'follows',
-          'follows.following_user_id IN (:...findFollowingUser)',
-          { findFollowingUser },
-        )
-        .where('users.id = :id OR users.id IN (:...findFollowingUser)', {
-          id: userId,
-          findFollowingUser,
-        })
-        .offset(startPosition)
-        .limit(limitNumber)
-        .getRawMany();
+        resultQuery = await result
+          .leftJoin(
+            Follow,
+            'follows',
+            'follows.following_user_id IN (:...findFollowingUser)',
+            { findFollowingUser },
+          )
+          .where('users.id = :id OR users.id IN (:...findFollowingUser)', {
+            id: userId,
+            findFollowingUser,
+          })
+          .getRawMany();
+      }
+
+      const parsedResult = resultQuery.map((row) => {
+        return {
+          whisperId: row.whisperId,
+          content: row.content,
+          userId: row.userId,
+          nickName: row.nickName,
+          hashTag: JSON.parse(row.hashTag),
+          imageUrl: JSON.parse(row.imageUrl),
+          isMyWhisper: row.isMyWhisper,
+        };
+      });
+      return await Promise.all(parsedResult);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('타임라인 조회에 실패하였습니다.');
     }
-
-    const parsedResult = resultQuery.map((row) => {
-      return {
-        whisperId: row.whisperId,
-        content: row.content,
-        userId: row.userId,
-        nickName: row.nickName,
-        hashTag: JSON.parse(row.hashTag),
-        imageUrl: JSON.parse(row.imageUrl),
-        isMyWhisper: row.isMyWhisper,
-      };
-    });
-
-    return await Promise.all(parsedResult);
   }
 
-  private async viewUserTimeLine(accessUserId: number, userId: number) {
+  private async viewUserTimeLine(
+    accessUserId: number,
+    userId: number,
+    pageNumber: number,
+    limitNumber: number,
+  ) {
     try {
+      const startPosition = (pageNumber - 1) * limitNumber;
+
       return await this.whispersRepository
         .createQueryBuilder('whispers')
         .select([
@@ -99,8 +109,13 @@ export class UserWhisperService {
           'whispers.id = whisper_images.whisper_id',
         )
         .where('users.id = :id', { id: userId })
+        .andWhere('whispers.whisper_status_id = :notDeletedSatusId', {
+          notDeletedSatusId: 2,
+        })
         .groupBy('whispers.id')
         .orderBy('whispers.created_at', 'DESC')
+        .offset(startPosition)
+        .limit(limitNumber)
         .setParameter('accessUserId', accessUserId);
     } catch (err) {
       console.error(err);

@@ -6,7 +6,7 @@ export class UserWhisperController {
   constructor(private readonly userWhisperService: UserWhisperService) {}
 
   @Get(':id/whispers')
-  async findOne(
+  async findAllUserWhispers(
     @Param('id') id: number,
     @Request() req,
     @Query('page') pageNumber: number,
@@ -23,7 +23,7 @@ export class UserWhisperController {
   }
 
   @Get(':id/timeline')
-  async findAll(
+  async findAllTimeline(
     @Param('id') id: number,
     @Request() req,
     @Query('page') pageNumber: number,
