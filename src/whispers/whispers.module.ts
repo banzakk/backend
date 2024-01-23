@@ -7,13 +7,20 @@ import { ImageModule } from '@src/image/image.module';
 import { WhisperHashTagModule } from '@src/whisper-hash-tag/whisper-hash-tag.module';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import { WhisperImagesModule } from '@src/whisper-images/whisper-images.module';
+import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { Whisper } from './entities/whisper.entity';
 import { WhispersController } from './whispers.controller';
 import { WhispersService } from './whispers.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Whisper, WhisperImage, HashTags, HashTagStatus]),
+    TypeOrmModule.forFeature([
+      Whisper,
+      WhisperImage,
+      HashTags,
+      HashTagStatus,
+      WhisperStatus,
+    ]),
     WhisperImagesModule,
     HashTagsModule,
     WhisperHashTagModule,
