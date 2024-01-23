@@ -8,13 +8,14 @@ import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-im
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
 import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { DataSource, Repository } from 'typeorm';
-import { CreateWhisperDto } from './dto/create-whisper.dto';
 import { Whisper } from './entities/whisper.entity';
 
 @Injectable()
 export class WhispersService {
   constructor(
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
+    @InjectRepository(WhisperStatus)
+    private whisperStatusRepository: Repository<WhisperStatus>,
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,
     private readonly whisperHashTagService: WhisperHashTagService,
@@ -23,26 +24,6 @@ export class WhispersService {
   ) {}
 
   async createWhisper(
-    userId: number,
-    createWhisperDto: CreateWhisperDto,
-    image,
-    imageBuffers,
-    fileNames,
-    fileMimeTypes,
-    fileSize,
-  ) {
-    return await this.saveWhisper(
-      userId,
-      createWhisperDto,
-      image,
-      imageBuffers,
-      fileNames,
-      fileMimeTypes,
-      fileSize,
-    );
-  }
-
-  private async saveWhisper(
     userId: number,
     createWhisperDto,
     image,
@@ -108,6 +89,46 @@ export class WhispersService {
       console.log(err);
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException('위스퍼 작성에 실패하였습니다.');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async deleteWhisper(userId: number, whisperId: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const [whisperStatus] = await this.whispersRepository
+        .createQueryBuilder('whispers')
+        .select('whispers.whisper_status_id')
+        .where('whispers.id = :id', { id: whisperId })
+        .andWhere('whispers.user_id = :userId', { userId })
+        .getRawMany();
+
+      if (whisperStatus.whisper_status_id === 2) {
+        const foundDeleteWhisperStatus =
+          await this.whisperStatusRepository.findOne({
+            where: { id: 1 },
+          });
+
+        await this.whispersRepository
+          .createQueryBuilder('whispers')
+          .where('whispers.id = :id', { id: whisperId })
+          .andWhere('whispers.user_id = :userId', { userId })
+          .update({ whisper_status: foundDeleteWhisperStatus })
+          .execute();
+
+        await queryRunner.commitTransaction();
+        return { message: '위스퍼 삭제를 성공하였습니다.' };
+      } else {
+        throw new InternalServerErrorException('이미 삭제된 위스퍼 입니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('위스퍼 삭제 중 실패하였습니다.');
     } finally {
       await queryRunner.release();
     }
