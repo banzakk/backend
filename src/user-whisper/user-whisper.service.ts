@@ -54,8 +54,9 @@ export class UserWhisperService {
           .getRawMany();
       }
 
-      const parsedResult = resultQuery.map((row) => {
-        return {
+      return {
+        currentPage: pageNumber,
+        data: resultQuery.map((row) => ({
           whisperId: row.whisperId,
           content: row.content,
           userId: row.userId,
@@ -63,9 +64,8 @@ export class UserWhisperService {
           hashTag: JSON.parse(row.hashTag),
           imageUrl: JSON.parse(row.imageUrl),
           isMyWhisper: row.isMyWhisper,
-        };
-      });
-      return await Promise.all(parsedResult);
+        })),
+      };
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('타임라인 조회에 실패하였습니다.');
