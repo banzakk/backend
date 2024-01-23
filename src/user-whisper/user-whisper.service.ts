@@ -54,15 +54,8 @@ export class UserWhisperService {
           .getRawMany();
       }
 
-      if ([resultQuery].length > limitNumber) {
-        resultQuery.pop();
-      }
-
-      const hasMoreData: boolean = resultQuery.length > limitNumber;
-
       return {
         currentPage: pageNumber,
-        hasMoreData: hasMoreData,
         data: resultQuery.map((row) => ({
           whisperId: row.whisperId,
           content: row.content,
