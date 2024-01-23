@@ -29,7 +29,7 @@ export class UserWhisperService {
         accessUserId,
         userId,
         pageNumber,
-        limitNumber + 1,
+        limitNumber,
       );
       let resultQuery;
 
