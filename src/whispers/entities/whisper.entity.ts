@@ -1,3 +1,4 @@
+import { Like } from '@src/like/entities/like.entity';
 import { User } from '@src/users/entities/user.entity';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
@@ -12,7 +13,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Rewhisper, WhisperHashTag } from '../../models';
-import { Like } from '../../models/like.entity';
 
 @Entity('whispers')
 export class Whisper {
