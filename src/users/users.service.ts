@@ -331,4 +331,15 @@ export class UsersService {
       );
     }
   }
+
+  async findUserId(userId: number) {
+    try {
+      return await this.usersRepository.findOne({ where: { id: userId } });
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '유저 아이디를 찾는데 실패했습니다.',
+      );
+    }
+  }
 }
