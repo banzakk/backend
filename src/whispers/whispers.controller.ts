@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -47,5 +48,16 @@ export class WhispersController {
   @Post(':whisperId/like')
   async likeWhisper(@Request() req, @Param('whisperId') whisperId: number) {
     return await this.whispersService.likeWhisper(req.user.userId, whisperId);
+  }
+
+  @Delete(':whisperId/like')
+  async deleteLikeWhisper(
+    @Request() req,
+    @Param('whisperId') whisperId: number,
+  ) {
+    return await this.whispersService.deleteLikeWhisper(
+      req.user.userId,
+      whisperId,
+    );
   }
 }
