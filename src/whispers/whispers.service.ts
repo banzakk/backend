@@ -158,9 +158,16 @@ export class WhispersService {
       return await this.likeService.createLike(userId, whisperId);
     } catch (err) {
       console.error(err);
-      throw new InternalServerErrorException(
-        '좋아요를 생성하는데 실패했습니다.',
-      );
+      throw new InternalServerErrorException('좋아요를 실패했습니다.');
+    }
+  }
+
+  async deleteLikeWhisper(userId: number, whisperId: number) {
+    try {
+      return await this.likeService.deleteLike(userId, whisperId);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('좋아요 해제를 실패했습니다.');
     }
   }
 }
