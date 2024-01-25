@@ -1,7 +1,14 @@
 import { User } from '@src/users/entities/user.entity';
 import { Whisper } from '@src/whispers/entities/whisper.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity('likes')
+@Index(['user', 'whisper'], { unique: true })
 export class Like {
   @PrimaryGeneratedColumn()
   id: number;

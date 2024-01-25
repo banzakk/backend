@@ -1,7 +1,13 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagsService } from '@src/hash-tags/hash-tags.service';
 import { ImageService } from '@src/image/image.service';
+import { LikeService } from '@src/like/like.service';
 import { User } from '@src/users/entities/user.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
@@ -20,6 +26,8 @@ export class WhispersService {
     private readonly whisperImagesService: WhisperImagesService,
     private readonly whisperHashTagService: WhisperHashTagService,
     private readonly imageService: ImageService,
+    @Inject(forwardRef(() => LikeService))
+    private readonly likeService: LikeService,
     private dataSource: DataSource,
   ) {}
 
@@ -131,6 +139,35 @@ export class WhispersService {
       throw new InternalServerErrorException('위스퍼 삭제 중 실패하였습니다.');
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  async findWhisper(whisperId: number) {
+    try {
+      return await this.whispersRepository.findOne({
+        where: { id: whisperId },
+      });
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('위스퍼를 찾는데 실패하였습니다.');
+    }
+  }
+
+  async likeWhisper(userId: number, whisperId: number) {
+    try {
+      return await this.likeService.createLike(userId, whisperId);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('좋아요를 실패했습니다.');
+    }
+  }
+
+  async deleteLikeWhisper(userId: number, whisperId: number) {
+    try {
+      return await this.likeService.deleteLike(userId, whisperId);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('좋아요 해제를 실패했습니다.');
     }
   }
 }

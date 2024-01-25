@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { WhispersModule } from './whispers/whispers.module';
 import { UserWhisperModule } from './user-whisper/user-whisper.module';
 import { UserProfileImagesModule } from './user-profile-images/user-profile-images.module';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { UserProfileImagesModule } from './user-profile-images/user-profile-imag
     UserWhisperModule,
     UserHashTagsModule,
     UserProfileImagesModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [
