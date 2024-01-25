@@ -133,4 +133,5 @@ export class WhispersService {
       await queryRunner.release();
     }
   }
+  async findWhisper(whisperId: number) {
 }
