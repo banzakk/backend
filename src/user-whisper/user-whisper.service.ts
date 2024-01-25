@@ -41,12 +41,6 @@ export class UserWhisperService {
         findFollowingUser.push(accessUserId);
 
         resultQuery = await result
-          .leftJoin(
-            Follow,
-            'follows',
-            'follows.following_user_id IN (:...findFollowingUser)',
-            { findFollowingUser },
-          )
           .where('users.id = :id OR users.id IN (:...findFollowingUser)', {
             id: userId,
             findFollowingUser,
