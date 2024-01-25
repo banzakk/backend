@@ -43,4 +43,9 @@ export class WhispersController {
   async DeletedWhisper(@Request() req, @Param('whisperId') whisperId: number) {
     return await this.whispersService.deleteWhisper(req.user.userId, whisperId);
   }
+
+  @Post(':whisperId/like')
+  async likeWhisper(@Request() req, @Param('whisperId') whisperId: number) {
+    return await this.whispersService.likeWhisper(req.user.userId, whisperId);
+  }
 }
