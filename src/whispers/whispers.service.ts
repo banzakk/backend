@@ -5,12 +5,16 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HashTags } from '@src/hash-tags/entities/hash-tag.entity';
 import { HashTagsService } from '@src/hash-tags/hash-tags.service';
 import { ImageService } from '@src/image/image.service';
+import { Like } from '@src/like/entities/like.entity';
 import { LikeService } from '@src/like/like.service';
 import { User } from '@src/users/entities/user.entity';
+import { WhisperHashTag } from '@src/whisper-hash-tag/entities/whisper-hash-tag.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
+import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
 import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -168,6 +172,72 @@ export class WhispersService {
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException('좋아요 해제를 실패했습니다.');
+    }
+  }
+
+  async findWhisperDetail(userId: number, whisperId: number) {
+    try {
+      const query = await this.whispersRepository
+        .createQueryBuilder('whispers')
+        .select([
+          'whispers.id AS whisperId',
+          'whispers.content AS content',
+          'users.id AS userId',
+          'users.name AS nickName',
+          '(CASE WHEN COUNT(hash_tags.name) > 0 THEN JSON_ARRAYAGG(hash_tags.name) ELSE "[]" END) AS hashTag',
+          '(CASE WHEN COUNT(whisper_images.url) > 0 THEN JSON_ARRAYAGG(whisper_images.url) ELSE "[]" END) AS imageUrl',
+          '(CASE WHEN users.id = :accessUserId THEN 1 ELSE 0 END) AS isMyWhisper',
+          '(CASE WHEN likes.user_id IS NOT NULL THEN 1 ELSE 0 END) AS liked',
+        ])
+        .leftJoin(User, 'users', 'whispers.user_id = users.id')
+        .leftJoin(
+          WhisperHashTag,
+          'whisper_hash_tags',
+          'whispers.id = whisper_hash_tags.whisper_id',
+        )
+        .leftJoin(
+          HashTags,
+          'hash_tags',
+          'whisper_hash_tags.hash_tag_id = hash_tags.id',
+        )
+        .leftJoin(
+          WhisperImage,
+          'whisper_images',
+          'whispers.id = whisper_images.whisper_id',
+        )
+        .leftJoin(
+          Like,
+          'likes',
+          'likes.user_id = :accessUserId AND likes.whisper_id = :whisperId',
+        )
+        .where('whispers.id = :whisperId', { whisperId: whisperId })
+        .setParameter('accessUserId', userId)
+        .getRawMany();
+
+      return query.map((row) => ({
+        whisperId: row.whisperId,
+        content: row.content,
+        userId: row.userId,
+        nickName: row.nickName,
+        hashTag: JSON.parse(row.hashTag),
+        imageUrl: JSON.parse(row.imageUrl),
+        isMyWhisper: row.isMyWhisper,
+        liked: row.liked,
+      }));
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('위스퍼를 찾는데 실패했습니다.');
+    }
+  }
+
+  async viewWhisperDetail(userId: number, whisperId: number) {
+    try {
+      return await this.findWhisperDetail(userId, whisperId);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException(
+        '위스퍼를 불러오는데 실패했습니다.',
+      );
     }
   }
 }
