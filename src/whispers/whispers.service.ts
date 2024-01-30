@@ -175,7 +175,7 @@ export class WhispersService {
     }
   }
 
-  async findWhisperDetail(userId: number, whisperId: number) {
+  async viewWhisperDetail(userId: number, whisperId: number) {
     try {
       const query = await this.whispersRepository
         .createQueryBuilder('whispers')
@@ -224,15 +224,6 @@ export class WhispersService {
         isMyWhisper: row.isMyWhisper,
         liked: row.liked,
       }));
-    } catch (err) {
-      console.error(err);
-      throw new InternalServerErrorException('위스퍼를 찾는데 실패했습니다.');
-    }
-  }
-
-  async viewWhisperDetail(userId: number, whisperId: number) {
-    try {
-      return await this.findWhisperDetail(userId, whisperId);
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException(
