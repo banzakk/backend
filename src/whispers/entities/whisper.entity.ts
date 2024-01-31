@@ -1,7 +1,7 @@
 import { Like } from '@src/like/entities/like.entity';
 import { User } from '@src/users/entities/user.entity';
+import { WhisperDeletedStatus } from '@src/whisper-deleted-status/entities/whisper-deleted-status.entity';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
-import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import {
   Column,
   CreateDateColumn,
@@ -28,9 +28,9 @@ export class Whisper {
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
-  @ManyToOne(() => WhisperStatus)
-  @JoinColumn({ name: 'whisper_status_id' })
-  whisper_status: WhisperStatus;
+  @ManyToOne(() => WhisperDeletedStatus)
+  @JoinColumn({ name: 'whisper_deleted_status_id' })
+  whisper_status: WhisperDeletedStatus;
 
   @ManyToOne(() => User, (user) => user.whispers, { nullable: false })
   @JoinColumn({ name: 'user_id' })

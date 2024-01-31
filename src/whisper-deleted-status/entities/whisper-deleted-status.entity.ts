@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('whisper_status')
-export class WhisperStatus {
+@Entity('whisper_deleted_status')
+export class WhisperDeletedStatus {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -11,12 +11,12 @@ import { ImageService } from '@src/image/image.service';
 import { Like } from '@src/like/entities/like.entity';
 import { LikeService } from '@src/like/like.service';
 import { User } from '@src/users/entities/user.entity';
+import { WhisperDeletedStatus } from '@src/whisper-deleted-status/entities/whisper-deleted-status.entity';
 import { WhisperHashTag } from '@src/whisper-hash-tag/entities/whisper-hash-tag.entity';
 import { WhisperHashTagService } from '@src/whisper-hash-tag/whisper-hash-tag.service';
 import { CreateWhisperImageDto } from '@src/whisper-images/dto/create-whisper-image.dto';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import { WhisperImagesService } from '@src/whisper-images/whisper-images.service';
-import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Whisper } from './entities/whisper.entity';
 
@@ -24,8 +24,8 @@ import { Whisper } from './entities/whisper.entity';
 export class WhispersService {
   constructor(
     @InjectRepository(Whisper) private whispersRepository: Repository<Whisper>,
-    @InjectRepository(WhisperStatus)
-    private whisperStatusRepository: Repository<WhisperStatus>,
+    @InjectRepository(WhisperDeletedStatus)
+    private whisperStatusRepository: Repository<WhisperDeletedStatus>,
     private readonly hashTagsService: HashTagsService,
     private readonly whisperImagesService: WhisperImagesService,
     private readonly whisperHashTagService: WhisperHashTagService,
@@ -52,16 +52,14 @@ export class WhispersService {
       const user = await this.whispersRepository.manager.findOne(User, {
         where: { id: userId },
       });
-      const whisperStatus = await this.whispersRepository.manager.findOne(
-        WhisperStatus,
-        {
+      const whisperDeletedStatus =
+        await this.whispersRepository.manager.findOne(WhisperDeletedStatus, {
           where: { id: 2 },
-        },
-      );
+        });
       const whisper = new Whisper();
       whisper.user = user;
       whisper.content = content;
-      whisper.whisper_status = whisperStatus;
+      whisper.whisper_status = whisperDeletedStatus;
 
       const path: string = 'whisper_images';
 
@@ -112,14 +110,14 @@ export class WhispersService {
     await queryRunner.startTransaction();
 
     try {
-      const [whisperStatus] = await this.whispersRepository
+      const [whisperDeletedStatus] = await this.whispersRepository
         .createQueryBuilder('whispers')
         .select('whispers.whisper_status_id')
         .where('whispers.id = :id', { id: whisperId })
         .andWhere('whispers.user_id = :userId', { userId })
         .getRawMany();
 
-      if (whisperStatus.whisper_status_id === 2) {
+      if (whisperDeletedStatus.whisper_status_id === 2) {
         const foundDeleteWhisperStatus =
           await this.whisperStatusRepository.findOne({
             where: { id: 1 },

@@ -5,10 +5,10 @@ import { HashTags } from '@src/hash-tags/entities/hash-tag.entity';
 import { HashTagsModule } from '@src/hash-tags/hash-tags.module';
 import { ImageModule } from '@src/image/image.module';
 import { LikeModule } from '@src/like/like.module';
+import { WhisperDeletedStatus } from '@src/whisper-deleted-status/entities/whisper-deleted-status.entity';
 import { WhisperHashTagModule } from '@src/whisper-hash-tag/whisper-hash-tag.module';
 import { WhisperImage } from '@src/whisper-images/entities/whisper-image.entity';
 import { WhisperImagesModule } from '@src/whisper-images/whisper-images.module';
-import { WhisperStatus } from '@src/whisper-status/entities/whisper-status.entity';
 import { Whisper } from './entities/whisper.entity';
 import { WhispersController } from './whispers.controller';
 import { WhispersService } from './whispers.service';
@@ -20,7 +20,7 @@ import { WhispersService } from './whispers.service';
       WhisperImage,
       HashTags,
       HashTagStatus,
-      WhisperStatus,
+      WhisperDeletedStatus,
     ]),
     WhisperImagesModule,
     HashTagsModule,
