@@ -30,7 +30,11 @@ export class Whisper {
 
   @ManyToOne(() => WhisperDeletedStatus)
   @JoinColumn({ name: 'whisper_deleted_status_id' })
-  whisper_status: WhisperDeletedStatus;
+  whisper_deleted_status: WhisperDeletedStatus;
+
+  // @ManyToOne(() => WhisperCommentStatus)
+  // @JoinColumn({ name: 'whisper_comment_status_id' })
+  // whisper_comment_status: WhisperCommentStatus;
 
   @ManyToOne(() => User, (user) => user.whispers, { nullable: false })
   @JoinColumn({ name: 'user_id' })

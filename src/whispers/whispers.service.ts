@@ -59,7 +59,7 @@ export class WhispersService {
       const whisper = new Whisper();
       whisper.user = user;
       whisper.content = content;
-      whisper.whisper_status = whisperDeletedStatus;
+      whisper.whisper_deleted_status = whisperDeletedStatus;
 
       const path: string = 'whisper_images';
 
@@ -112,12 +112,12 @@ export class WhispersService {
     try {
       const [whisperDeletedStatus] = await this.whispersRepository
         .createQueryBuilder('whispers')
-        .select('whispers.whisper_status_id')
+        .select('whispers.whisper_deleted_status_id')
         .where('whispers.id = :id', { id: whisperId })
         .andWhere('whispers.user_id = :userId', { userId })
         .getRawMany();
 
-      if (whisperDeletedStatus.whisper_status_id === 2) {
+      if (whisperDeletedStatus.whisper_deleted_status === 2) {
         const foundDeleteWhisperStatus =
           await this.whisperStatusRepository.findOne({
             where: { id: 1 },
@@ -127,7 +127,7 @@ export class WhispersService {
           .createQueryBuilder('whispers')
           .where('whispers.id = :id', { id: whisperId })
           .andWhere('whispers.user_id = :userId', { userId })
-          .update({ whisper_status: foundDeleteWhisperStatus })
+          .update({ whisper_deleted_status: foundDeleteWhisperStatus })
           .execute();
 
         await queryRunner.commitTransaction();
