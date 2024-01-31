@@ -120,4 +120,25 @@ export class FollowsService {
       );
     }
   }
+
+  async findFollowingUserId(accessUserId: number) {
+    try {
+      return (
+        await this.followsRepository
+          .createQueryBuilder('follow')
+          .select('follows.following_user_id')
+          .leftJoin(
+            Follow,
+            'follows',
+            'follows.followed_user_id = :accessUserId',
+          )
+          .setParameter('accessUserId', accessUserId)
+          .distinct(true)
+          .getRawMany()
+      ).map((data) => data.following_user_id);
+    } catch (err) {
+      console.error(err);
+      throw new InternalServerErrorException('팔로잉 유저를 찾을 수 없습니다.');
+    }
+  }
 }

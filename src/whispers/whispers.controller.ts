@@ -1,6 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
   Post,
   Request,
   UploadedFiles,
@@ -34,6 +38,38 @@ export class WhispersController {
       fileNames,
       fileMimeTypes,
       fileSize,
+    );
+  }
+
+  @Patch(':whisperId')
+  async DeletedWhisper(@Request() req, @Param('whisperId') whisperId: number) {
+    return await this.whispersService.deleteWhisper(req.user.userId, whisperId);
+  }
+
+  @Get(':whisperId')
+  async viewWhisperDetail(
+    @Request() req,
+    @Param('whisperId') whisperId: number,
+  ) {
+    return await this.whispersService.viewWhisperDetail(
+      req.user.userId,
+      whisperId,
+    );
+  }
+
+  @Post(':whisperId/like')
+  async likeWhisper(@Request() req, @Param('whisperId') whisperId: number) {
+    return await this.whispersService.likeWhisper(req.user.userId, whisperId);
+  }
+
+  @Delete(':whisperId/like')
+  async deleteLikeWhisper(
+    @Request() req,
+    @Param('whisperId') whisperId: number,
+  ) {
+    return await this.whispersService.deleteLikeWhisper(
+      req.user.userId,
+      whisperId,
     );
   }
 }

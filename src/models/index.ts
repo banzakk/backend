@@ -4,7 +4,6 @@ export * from './closed-message-room-status.entity';
 export * from './deleted-whisper.entity';
 export * from './district.entity';
 export * from './hash-tag.entity';
-export * from './like.entity';
 export * from './market.entity';
 export * from './message-room.entity';
 export * from './message.entity';

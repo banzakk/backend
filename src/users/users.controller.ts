@@ -68,6 +68,7 @@ export class UsersController {
     try {
       if (image.length === 0)
         throw new BadRequestException('이미지가 없습니다.');
+
       const { userUid } = req.user;
       await this.usersService.updateUserData(
         image,
