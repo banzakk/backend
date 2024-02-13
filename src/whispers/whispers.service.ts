@@ -114,12 +114,12 @@ export class WhispersService {
     try {
       const [whisperStatus] = await this.whispersRepository
         .createQueryBuilder('whispers')
-        .select('whispers.whisper_status_id')
+        .select('whispers.whisper_deleted_status_id')
         .where('whispers.id = :id', { id: whisperId })
         .andWhere('whispers.user_id = :userId', { userId })
         .getRawMany();
 
-      if (whisperStatus.whisper_status_id === 2) {
+      if (whisperStatus.whisper_deleted_status_id === 2) {
         const foundDeleteWhisperStatus =
           await this.whisperStatusRepository.findOne({
             where: { id: 1 },
