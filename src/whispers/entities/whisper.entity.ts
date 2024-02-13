@@ -29,7 +29,7 @@ export class Whisper {
   updated_at: Date;
 
   @ManyToOne(() => WhisperStatus)
-  @JoinColumn({ name: 'whisper_status_id' })
+  @JoinColumn({ name: 'whisper_deleted_status_id' })
   whisper_status: WhisperStatus;
 
   @ManyToOne(() => User, (user) => user.whispers, { nullable: false })

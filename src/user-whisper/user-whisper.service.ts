@@ -103,7 +103,7 @@ export class UserWhisperService {
           'whispers.id = whisper_images.whisper_id',
         )
         .where('users.id = :id', { id: userId })
-        .andWhere('whispers.whisper_status_id = :notDeletedSatusId', {
+        .andWhere('whispers.whisper_deleted_status_id = :notDeletedSatusId', {
           notDeletedSatusId: 2,
         })
         .groupBy('whispers.id')
