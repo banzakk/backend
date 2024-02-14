@@ -42,7 +42,7 @@ export class WhispersController {
   }
 
   @Patch(':whisperId')
-  async DeletedWhisper(@Request() req, @Param('whisperId') whisperId: number) {
+  async deletedWhisper(@Request() req, @Param('whisperId') whisperId: number) {
     return await this.whispersService.deleteWhisper(req.user.userId, whisperId);
   }
 
