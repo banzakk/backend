@@ -1,7 +1,6 @@
 export * from './block.entity';
 export * from './city.entity';
 export * from './closed-message-room-status.entity';
-export * from './deleted-whisper.entity';
 export * from './district.entity';
 export * from './hash-tag.entity';
 export * from './market.entity';
