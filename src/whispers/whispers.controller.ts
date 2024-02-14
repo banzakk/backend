@@ -21,7 +21,7 @@ export class WhispersController {
 
   @Post()
   @UseInterceptors(FilesInterceptor('image', 4))
-  async create(
+  async createWhisper(
     @Request() req,
     @Body(new ValidationPipe()) createWhisperDto: CreateWhisperDto,
     @UploadedFiles() image,
